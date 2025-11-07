@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('kota');
             $table->string('alamat');
             $table->text('deskripsi');
-            $table->decimal('rating_hotel', 3, 2);
+            $table->decimal('rating_hotel', 3, 2)->nullable();
             $table->timestamps();
         });
     }

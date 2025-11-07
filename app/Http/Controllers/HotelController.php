@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Hotel;
 use Illuminate\Http\Request;
 
 class HotelController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $hotels = Hotel::all();
+        return response()->json($hotels);
     }
 
     /**
@@ -19,7 +18,20 @@ class HotelController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'nama_hotel' => 'required|string|max:255',
+            'kota' => 'required|string|max:100',
+            'alamat' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'rating_hotel' => 'nullable|numeric|between:0,5', // rating harus >= 5 dan <=5
+        ]);
+
+        $hotel = Hotel::create($validated);
+
+        return response()->json([
+            'message' => 'Hotel created succesfully',
+            'data' => $hotel,
+        ]);
     }
 
     /**
@@ -27,7 +39,17 @@ class HotelController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $hotel = Hotel::where('id_hotel', $id)->first();
+
+        if (!$hotel) {
+            return response()->json([
+                'message' => 'Hotel not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'data' => $hotel
+        ]);
     }
 
     /**
@@ -35,7 +57,29 @@ class HotelController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $hotel = Hotel::where('id_hotel', $id)->first();
+
+        if(!$hotel){
+            return response()->json([
+                'message' => 'Hotel not found',
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'nama_hotel' => 'required|string|max:255',
+            'kota' => 'required|string|max:100',
+            'alamat' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'rating_hotel' => 'nullable|numeric|between:0,5', // rating harus >= 5 dan <=5
+        ]);
+
+        $hotel->update($validated);
+
+        return response()->json([
+            'message' => 'Hotel updated succesfully',
+            'data' => $hotel->fresh(), // ganti dengan data/objek baru
+        ]);
+        
     }
 
     /**
@@ -43,6 +87,17 @@ class HotelController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $hotel = Hotel::where('id_hotel', $id)->first();
+        if(!$hotel){
+            return response()->json([
+                'message' => 'Hotel not found',
+            ], 404);
+        }
+
+        $hotel->delete();
+
+        return response()->json([
+            'message' => 'Hotel deleted succesfully',
+        ]);
     }
 }
