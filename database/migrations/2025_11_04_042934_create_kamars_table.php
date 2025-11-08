@@ -14,12 +14,14 @@ return new class extends Migration
         Schema::create('kamars', function (Blueprint $table) {
             $table->increments('id_kamar');
             $table->integer('id_hotel')->unsigned();
+            $table->string('nama_kamar');
             $table->string('nomor_kamar');
             $table->string('tipe_kamar');
             $table->decimal('harga', 10, 2);
             $table->boolean('status_kamar')->default(true);
             $table->string('lantai');
             $table->integer('kapasitas');
+            $table->integer('stok_kamar');
             $table->timestamps();
 
             $table->foreign('id_hotel')

@@ -27,12 +27,14 @@ class KamarController extends Controller
     {
         $validated = $request->validate([
             'id_hotel' => 'required|integer|exists:hotels,id_hotel',
+            'nama_kamar' => 'required|string|max:150',
             'nomor_kamar' => 'required|string|max:50',
             'tipe_kamar' => 'required|string|max:100',
             'harga' => 'required|numeric|min:0',
             'status_kamar' => 'nullable|boolean',
             'lantai' => 'required|string|max:20',
             'kapasitas' => 'required|integer|min:1',
+            'stok_kamar' => 'required|integer|min:0',
         ]);
 
         $kamar = Kamar::create($validated);
@@ -71,12 +73,14 @@ class KamarController extends Controller
 
         $validated = $request->validate([
             'id_hotel' => 'required|integer|exists:hotels,id_hotel',
+            'nama_kamar' => 'required|string|max:150',
             'nomor_kamar' => 'required|string|max:50',
             'tipe_kamar' => 'required|string|max:100',
             'harga' => 'required|numeric|min:0',
             'status_kamar' => 'nullable|boolean',
             'lantai' => 'required|string|max:20',
             'kapasitas' => 'required|integer|min:1',
+            'stok_kamar' => 'required|integer|min:0',
         ]);
 
         $kamar->update($validated);

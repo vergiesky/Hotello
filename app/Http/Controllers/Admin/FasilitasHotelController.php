@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\FasilitasHotel;
 use App\Http\Controllers\Controller;
 
-class FasiltasHotel extends Controller
+class FasilitasHotelController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -36,7 +36,7 @@ class FasiltasHotel extends Controller
 
         return response()->json([
             'message' => 'Fasilitas hotel created successfully',
-            'data'    => $fasilitasHotel,
+            'data' => $fasilitasHotel,
         ], 201);
     }
 

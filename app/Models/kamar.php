@@ -13,6 +13,7 @@ class Kamar extends Model
     protected $primaryKey = 'id_kamar';
 
     protected $fillable = [
+        'nama_kamar',
         'id_hotel',
         'nomor_kamar',
         'tipe_kamar',
@@ -20,7 +21,17 @@ class Kamar extends Model
         'status_kamar',
         'lantai',
         'kapasitas',
+        'stok_kamar',
     ];
+
+    protected function casts(): array{
+        return [
+            'status_kamar' => 'boolean',
+            'kapasitas' => 'integer',
+            'stok_kamar' => 'integer',
+            'harga' => 'decimal:2',
+        ];
+    }
 
     public function hotel()
     {

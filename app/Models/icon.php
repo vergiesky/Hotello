@@ -17,12 +17,12 @@ class Icon extends Model
         'file_path_icon',
     ];
 
-    public function fasilitasHotel()
+    public function fasilitasHotesl()
     {
         return $this->hasMany(FasilitasHotel::class, 'id_icon', 'id_icon');
     }
 
-    public function fasilitasKamar()
+    public function fasilitasKamars()
     {
         return $this->hasMany(FasilitasKamar::class, 'id_icon', 'id_icon');
     }

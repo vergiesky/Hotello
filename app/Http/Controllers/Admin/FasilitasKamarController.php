@@ -26,17 +26,17 @@ class FasilitasKamarController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'id_kamar'                  => 'required|integer|exists:kamars,id_kamar',
-            'id_icon'                   => 'nullable|integer|exists:icons,id_icon',
-            'nama_fasilitas_kamar'      => 'required|string|max:255',
-            'keterangan_fasilitas_kamar'=> 'nullable|string',
+            'id_kamar' => 'required|integer|exists:kamars,id_kamar',
+            'id_icon' => 'nullable|integer|exists:icons,id_icon',
+            'nama_fasilitas_kamar' => 'required|string|max:255',
+            'keterangan_fasilitas_kamar' => 'nullable|string',
         ]);
 
         $fasilitasKamar = FasilitasKamar::create($validated);
 
         return response()->json([
             'message' => 'Fasilitas kamar created successfully',
-            'data'    => $fasilitasKamar,
+            'data' => $fasilitasKamar,
         ], 201);
     }
 
