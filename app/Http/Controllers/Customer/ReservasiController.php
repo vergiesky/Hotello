@@ -36,7 +36,7 @@ class ReservasiController extends Controller
         return response()->json([
             'message' => 'Reservasi added succesfully',
             'data' => $reservasi,
-        ]);
+        ], 201);
     }
 
     // Read reservasi

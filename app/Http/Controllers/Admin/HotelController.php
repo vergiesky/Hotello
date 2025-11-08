@@ -11,7 +11,10 @@ class HotelController extends Controller
     public function index()
     {
         $hotels = Hotel::all();
-        return response()->json($hotels);
+        
+        return response()->json([
+            'data' => $hotels,
+        ], 200);
     }
 
     /**
@@ -30,9 +33,9 @@ class HotelController extends Controller
         $hotel = Hotel::create($validated);
 
         return response()->json([
-            'message' => 'Hotel created succesfully',
+            'message' => 'Hotel created successfully',
             'data' => $hotel,
-        ]);
+        ], 201);
     }
 
     /**
@@ -50,7 +53,7 @@ class HotelController extends Controller
 
         return response()->json([
             'data' => $hotel
-        ]);
+        ], 200);
     }
 
     /**
@@ -77,9 +80,9 @@ class HotelController extends Controller
         $hotel->update($validated);
 
         return response()->json([
-            'message' => 'Hotel updated succesfully',
+            'message' => 'Hotel updated successfully',
             'data' => $hotel->fresh(), // ganti dengan data/objek baru
-        ]);
+        ], 200);
     }
 
     /**
@@ -97,7 +100,7 @@ class HotelController extends Controller
         $hotel->delete();
 
         return response()->json([
-            'message' => 'Hotel deleted succesfully',
-        ]);
+            'message' => 'Hotel deleted successfully',
+        ], 200);
     }
 }

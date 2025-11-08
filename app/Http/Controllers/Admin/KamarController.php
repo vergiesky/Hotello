@@ -14,7 +14,10 @@ class KamarController extends Controller
     public function index()
     {
         $kamars = Kamar::all();
-        return response()->json($kamars);
+
+        return response()->json([
+            'data' => $kamars,
+        ], 200);
     }
 
     /**
@@ -49,7 +52,10 @@ class KamarController extends Controller
         if (!$kamar) {
             return response()->json(['message' => 'Kamar not found'], 404);
         }
-        return response()->json($kamar);
+
+        return response()->json([
+            'data' => $kamar,
+        ], 200);
     }
 
     /**
@@ -78,7 +84,7 @@ class KamarController extends Controller
         return response()->json([
             'message' => 'Kamar updated successfully',
             'data'    => $kamar->fresh(),
-        ]);
+        ], 200);
     }
 
     /**
@@ -88,10 +94,14 @@ class KamarController extends Controller
     {
         $kamar = Kamar::where('id_kamar', $id)->first();
         if (!$kamar) {
-            return response()->json(['message' => 'Kamar not found'], 404);
+            return response()->json([
+                'message' => 'Kamar not found'
+            ], 404);
         }
 
         $kamar->delete();
-        return response()->json(['message' => 'Kamar deleted successfully']);
+        return response()->json([
+            'message' => 'Kamar deleted successfully'
+        ], 200);
     }
 }

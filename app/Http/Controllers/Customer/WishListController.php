@@ -35,7 +35,7 @@ class WishListController extends Controller
         return response()->json([
             'message' => 'Wishlist added succesfully',
             'data' => $wishList,
-        ]);
+        ], 201);
     }
 
     // Read Wishlist

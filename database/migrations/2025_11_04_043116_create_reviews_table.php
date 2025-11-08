@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('id_kamar')->unsigned();
             $table->text('komentar');
             $table->decimal('rating', 3, 2);
-            $table->string('file_path_review');
+            $table->string('file_path_review')->nullable();
             $table->date('tanggal_review');
             $table->timestamps();
 
