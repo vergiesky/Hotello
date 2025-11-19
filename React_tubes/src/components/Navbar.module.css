@@ -1,0 +1,73 @@
+.navbar {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logoArea {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.square {
+  width: 28px;
+  height: 28px;
+  background: #000;
+  border-radius: 4px;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.navLinks {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.navLinks a {
+  cursor: pointer;
+  color: #444;
+}
+
+.listBtn {
+  background: #a7f3d0;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.darkBtn {
+  padding: 7px 14px;
+  background: #ddd;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+/* DARK MODE */
+.darkmode {
+  background: #111;
+  color: #fff;
+}
+
+.darkmode .navbar a {
+  color: #ddd !important;
+}
+
+.darkmode .listBtn {
+  background: #047857;
+  color: white;
+}
+
+.darkmode .darkBtn {
+  background: #333;
+  color: white;
+}

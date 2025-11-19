@@ -1,0 +1,70 @@
+.container {
+  max-width: 440px;
+  margin: 80px auto;
+  text-align: center;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 28px;
+}
+
+.form {
+  background: white;
+  padding: 30px;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+.input {
+  margin-top: 6px;
+  padding: 12px;
+  border: 1px solid #d5d5d5;
+  border-radius: 8px;
+}
+
+.button {
+  width: 100%;
+  padding: 12px;
+  background: #4bb8ec;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  margin-top: 12px;
+  cursor: pointer;
+}
+
+.divider {
+  margin: 20px 0;
+  text-align: center;
+  color: #aaa;
+}
+
+.googleBtn {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #d5d5d5;
+  border-radius: 8px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.switchText {
+  margin-top: 16px;
+  font-size: 14px;
+  color: #555;
+}
