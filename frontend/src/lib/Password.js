@@ -1,4 +1,3 @@
-// fungsi buat ngukur kekuatan password
 export function passwordStrengthScore(p) {
   let score = 0;
   if ((p || "").length >= 8) score += 1;
