@@ -2,7 +2,7 @@ import useAxios from ".";
 
 const SignUpCustomer = async (data) => {
     try {
-        const response = await useAxios.post("/register/customer", data); // mengirim data ke endpoint /register/customer
+        const response = await useAxios.post("/register/customer", data);
         return response.data;
     } catch (error) {
         throw error.response.data;
