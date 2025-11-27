@@ -1,6 +1,5 @@
 // src/routes/CustomerRoute.jsx
 
-import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
 export default function CustomerRoute({ children }) {
@@ -13,6 +12,11 @@ export default function CustomerRoute({ children }) {
   if (!token) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
+
+  // // cek role
+  // if (role !== "customer") {
+  //   return <Navigate to="/login" replace />;
+  // }
 
   // kalau ada token -> boleh akses halaman customer (dashboard, wishlist, dll)
   return children;

@@ -113,8 +113,6 @@ export default function CustomerDashboard() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* NAVBAR */}
-      <HeaderNavbar/>
 
       {/* BG utama gambar hotel + search, pakai search box floating */}
       <section className="relative w-full h-[500px] overflow-hidden">
