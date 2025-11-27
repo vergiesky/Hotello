@@ -3,6 +3,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { alertSuccess } from "../lib/Alert";
 import { useState } from "react";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+
 export default function HeaderNavbar() {
     // const { pathname } = useLocation();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

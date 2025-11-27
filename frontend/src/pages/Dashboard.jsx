@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Row, Col, Card } from "react-bootstrap";
+// import { Container, Row, Col, Card } from "react-bootstrap";
 
 const Dashboard = () => {
     const navigate = useNavigate(); // untuk mengatur navigasi, perpindahan halaman

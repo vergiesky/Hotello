@@ -1,7 +1,7 @@
 import Dashboard from "../pages/Dashboard";
 import LoginPage from "../pages/LoginPage";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
+// import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
 
 import Login from "../pages/auth/Login.jsx";
