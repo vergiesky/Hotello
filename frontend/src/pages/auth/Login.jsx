@@ -91,7 +91,7 @@ export default function Login() {
             <div className="relative z-10 h-full flex flex-col items-center justify-center text-white p-10">
               <div className="text-center max-w-md">
                 <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-4">
-                  <img src="/images/logo.png" alt="Logo" />
+                  <img src="../images/logo.png" alt="Logo" />
                 </div>
                 <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">
                   Selamat Datang Kembali
