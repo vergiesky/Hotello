@@ -13,7 +13,7 @@ class KamarController extends Controller
      */
     public function index()
     {
-        $kamars = Kamar::all();
+        $kamars = Kamar::with('hotel')->get();
 
         return response()->json([
             'data' => $kamars,
@@ -50,7 +50,7 @@ class KamarController extends Controller
      */
     public function show(string $id)
     {
-        $kamar = Kamar::where('id_kamar', $id)->first();
+        $kamar = Kamar::with('hotel')->where('id_kamar', $id)->first();
         if (!$kamar) {
             return response()->json(['message' => 'Kamar not found'], 404);
         }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\GambarKamar;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class GambarKamarController extends Controller
 {
@@ -13,7 +14,7 @@ class GambarKamarController extends Controller
      */
     public function index()
     {
-        $gambarKamar = GambarKamar::all();
+        $gambarKamar = GambarKamar::with('kamar')->get();
 
         return response()->json([
             'data' => $gambarKamar,
@@ -29,10 +30,17 @@ class GambarKamarController extends Controller
             'id_kamar' => 'required|integer|exists:kamars,id_kamar',
             'nama_gambar_kamar' => 'required|string|max:255',
             'keterangan_gambar_kamar' => 'nullable|string',
-            'file_path_gambar_kamar' => 'required|string|max:255',
+            'file_gambar' => 'required|file|mimes:png,jpg,jpeg,webp|max:4096',
         ]);
 
-        $gambarKamar = GambarKamar::create($validated);
+        $path = $request->file('file_gambar')->store('gambar_kamars', 'public');
+
+        $gambarKamar = GambarKamar::create([
+            'id_kamar' => $validated['id_kamar'],
+            'nama_gambar_kamar' => $validated['nama_gambar_kamar'],
+            'keterangan_gambar_kamar' => $validated['keterangan_gambar_kamar'] ?? null,
+            'file_path_gambar_kamar' => $path,
+        ]);
 
         return response()->json([
             'message' => 'Gambar kamar created successfully',
@@ -45,7 +53,7 @@ class GambarKamarController extends Controller
      */
     public function show(string $id)
     {
-        $gambarKamar = GambarKamar::where('id_gambar_kamar', $id)->first();
+        $gambarKamar = GambarKamar::with('kamar')->where('id_gambar_kamar', $id)->first();
 
         if (!$gambarKamar) {
             return response()->json([
@@ -75,10 +83,24 @@ class GambarKamarController extends Controller
             'id_kamar' => 'required|integer|exists:kamars,id_kamar',
             'nama_gambar_kamar' => 'required|string|max:255',
             'keterangan_gambar_kamar' => 'nullable|string',
-            'file_path_gambar_kamar' => 'required|string|max:255',
+            'file_gambar' => 'nullable|file|mimes:png,jpg,jpeg,webp|max:4096',
         ]);
 
-        $gambarKamar->update($validated);
+        $payload = [
+          'id_kamar' => $validated['id_kamar'],
+          'nama_gambar_kamar' => $validated['nama_gambar_kamar'],
+          'keterangan_gambar_kamar' => $validated['keterangan_gambar_kamar'] ?? null,
+        ];
+
+        if ($request->hasFile('file_gambar')) {
+            if ($gambarKamar->file_path_gambar_kamar && Storage::disk('public')->exists($gambarKamar->file_path_gambar_kamar)) {
+                Storage::disk('public')->delete($gambarKamar->file_path_gambar_kamar);
+            }
+            $path = $request->file('file_gambar')->store('gambar_kamars', 'public');
+            $payload['file_path_gambar_kamar'] = $path;
+        }
+
+        $gambarKamar->update($payload);
 
         return response()->json([
             'message' => 'Gambar kamar updated successfully',
@@ -97,6 +119,10 @@ class GambarKamarController extends Controller
             return response()->json([
                 'message' => 'Gambar kamar not found',
             ], 404);
+        }
+
+        if ($gambarKamar->file_path_gambar_kamar && Storage::disk('public')->exists($gambarKamar->file_path_gambar_kamar)) {
+            Storage::disk('public')->delete($gambarKamar->file_path_gambar_kamar);
         }
 
         $gambarKamar->delete();

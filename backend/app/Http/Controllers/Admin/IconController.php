@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Icon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class IconController extends Controller
 {
@@ -27,10 +28,15 @@ class IconController extends Controller
     {
         $validated = $request->validate([
             'nama_icon' => 'required|string|max:255',
-            'file_path_icon' => 'required|string|max:255',
+            'icon' => 'required|file|mimes:png,jpg,jpeg,svg,webp|max:2048',
         ]);
 
-        $icon = Icon::create($validated);
+        $path = $request->file('icon')->store('icons', 'public');
+
+        $icon = Icon::create([
+            'nama_icon' => $validated['nama_icon'],
+            'file_path_icon' => $path,
+        ]);
 
         return response()->json([
             'message' => 'Icon created successfully',
@@ -71,10 +77,21 @@ class IconController extends Controller
 
         $validated = $request->validate([
             'nama_icon' => 'required|string|max:255',
-            'file_path_icon' => 'required|string|max:255',
+            'icon' => 'nullable|file|mimes:png,jpg,jpeg,svg,webp|max:2048',
         ]);
 
-        $icon->update($validated);
+        $payload = ['nama_icon' => $validated['nama_icon']];
+
+        if ($request->hasFile('icon')) {
+            // hapus file lama jika ada
+            if ($icon->file_path_icon && Storage::disk('public')->exists($icon->file_path_icon)) {
+                Storage::disk('public')->delete($icon->file_path_icon);
+            }
+            $path = $request->file('icon')->store('icons', 'public');
+            $payload['file_path_icon'] = $path;
+        }
+
+        $icon->update($payload);
 
         return response()->json([
             'message' => 'Icon updated successfully',
@@ -93,6 +110,10 @@ class IconController extends Controller
             return response()->json([
                 'message' => 'Icon not found',
             ], 404);
+        }
+
+        if ($icon->file_path_icon && Storage::disk('public')->exists($icon->file_path_icon)) {
+            Storage::disk('public')->delete($icon->file_path_icon);
         }
 
         $icon->delete();

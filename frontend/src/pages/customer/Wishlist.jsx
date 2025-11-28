@@ -1,18 +1,14 @@
-// src/pages/customer/Wishlist.jsx
-
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 import { MapPin, Star, Trash2, ArrowLeft } from "lucide-react";
 
-import useAxios from "../../api";
+import useAxios, { BASE_URL } from "../../api";
 import { alertError } from "../../lib/Alert";
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+import Navbar from "../../components/Navbar";
+import { toastInfo } from "../../lib/Toast";
 
 /* HELPER IMAGE HOTEL (DARI DB) */
 function getHotelImageUrl(hotel) {
-  const firstImage = hotel?.gambarHotels?.[0];
+  const firstImage = hotel?.gambar_hotels?.[0];
 
   if (!firstImage || !firstImage.file_path_gambar_hotel) {
     return "/images/hotel1_main.jpg";
@@ -20,30 +16,20 @@ function getHotelImageUrl(hotel) {
 
   let path = (firstImage.file_path_gambar_hotel || "").trim();
 
-  if (
-    !path.startsWith("hotel_pictures/") &&
-    !path.startsWith("http://") &&
-    !path.startsWith("https://")
-  ) {
-    path = `hotel_pictures/${path}`;
-  }
+  const isAbsolute =
+    path.startsWith("http://") || path.startsWith("https://");
 
-  if (path.startsWith("http://") || path.startsWith("https://")) {
+  if (isAbsolute) {
     return path;
   }
 
-  return `${API_BASE_URL}/storage/${path}`;
+  // path relatif dari storage Laravel, contoh: "gambar_hotels/93T....jpg"
+  return `${BASE_URL}/storage/${path}`;
 }
 
 export default function Wishlist() {
-  const navigate = useNavigate();
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const user = JSON.parse(localStorage.getItem("user") || "null");
-  const avatarSrc = user?.user_profile
-    ? `${API_BASE_URL}/storage/${user.user_profile}`
-    : null;
 
   useEffect(() => {
     const fetchWishlist = async () => {
@@ -52,6 +38,7 @@ export default function Wishlist() {
         const res = await useAxios.get("/wishlists");
         const data = res.data.data || [];
         setWishlist(Array.isArray(data) ? data : []);
+        console.log(res.data);
       } catch (err) {
         console.error(err);
         alertError(
@@ -66,61 +53,36 @@ export default function Wishlist() {
     fetchWishlist();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
+const handleRemove = async (item) => {
+  try {
+    await useAxios.delete(`/wishlists/delete/${item.id_wishlist}`);
 
-  const handleRemove = async (item) => {
-    if (!window.confirm("Hapus hotel ini dari wishlist?")) return;
+    setWishlist((prev) =>
+      prev.filter((w) => w.id_wishlist !== item.id_wishlist)
+    );
 
-    try {
-      // Pake route backend (id_wishlist atau id lain)
-      await useAxios.delete(`/wishlists/${item.id_wishlist}`);
-      setWishlist((prev) =>
-        prev.filter((w) => w.id_wishlist !== item.id_wishlist)
-      );
-    } catch (err) {
-      console.error(err);
-      alertError(
-        "Gagal menghapus",
-        "Terjadi kesalahan saat menghapus dari wishlist."
-      );
-    }
-  };
-
+    // 🔔 Toastify sukses hapus
+    toastInfo("Hotel dihapus dari wishlist");
+  } catch (err) {
+    console.error(err);
+    alertError(
+      "Gagal menghapus",
+      "Terjadi kesalahan saat menghapus dari wishlist."
+    );
+  }
+};
   // Ambil data hotel dari item wishlist (bisa nested)
   const getHotelFromItem = (item) => {
     return item.hotel || item.kamar?.hotel || item;
   };
 
-
-  const location = useLocation();
-  const isActive = (path) => location.pathname === path;
-
-  const menus = [
-    { label: "Home", path: "/dashboard" },
-    { label: "Wishlist", path: "/wishlist" },
-    { label: "Deals", path: "/deals" },
-    { label: "About", path: "/about" },
-  ];
-
-
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
-      {/* NAVBAR (sama kaya dashboard, tapi menu Wishlist aktif) */}
+      <Navbar />
 
       {/* KONTEN WISHLIST */}
       <main className="flex-1">
         <section className="max-w-6xl mx-auto px-4 pt-8 pb-12">
-          {/* Tombol kembali */}
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6 text-sm font-medium"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Kembali</span>
-          </button>
 
           {/* Judul & info jumlah */}
           <div className="mb-8">
@@ -209,7 +171,10 @@ export default function Wishlist() {
                         </p>
                       </div>
 
-                      <button className="w-full h-11 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition mt-auto">
+                      <button
+                        onClick={() => navigate(`/hotel/${hotel?.id_hotel}`)}
+                        className="w-full h-11 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition mt-auto"
+                      >
                         Lihat Detail
                       </button>
                     </div>

@@ -57,9 +57,4 @@ class Kamar extends Model
     {
         return $this->hasMany(Review::class, 'id_kamar', 'id_kamar');
     }
-
-    public function wishlists()
-    {
-        return $this->hasMany(Wishlist::class, 'id_kamar', 'id_kamar');
-    }
 }

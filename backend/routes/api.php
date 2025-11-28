@@ -39,10 +39,11 @@ Route::get('/kamars/{id}', [KamarController::class, 'show']);
 
 // buat ngedit profile (data diri)
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user/profile', [UserController::class, 'show']);
-    Route::put('/user/profile', [UserController::class, 'update']);
-    Route::put('/user/password', [UserController::class, 'updatePassword']);
-
+    // kompatibel dengan frontend customer/profile.jsx
+    Route::get('/user', [UserController::class, 'show']);
+    Route::patch('/user', [UserController::class, 'update']);
+    Route::delete('/user', [UserController::class, 'destroy'])->name('user.destroy'); // pastikan ada method destroy jika dipakai
+    Route::post('/user/password', [UserController::class, 'updatePassword']);
 });
 
 // admin

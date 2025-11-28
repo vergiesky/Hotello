@@ -13,7 +13,7 @@ class WishListController extends Controller
     public function index()
     {
         $userId = Auth::id();
-        $wishList = Wishlist::with(['kamar.hotel'])
+        $wishList = Wishlist::with(['hotel.gambarHotels'])
             ->where('id_user', $userId)               
             ->orderByDesc('id_wishlist')
             ->get();
@@ -28,22 +28,22 @@ class WishListController extends Controller
         $userId = Auth::id();
 
         $validated = $request->validate([
-            'id_kamar' => 'required|exists:kamars,id_kamar',
+            'id_hotel' => 'required|exists:hotels,id_hotel',
         ]);
         
         $already = Wishlist::where('id_user', $userId)
-                ->where('id_kamar', $validated['id_kamar'])
+                ->where('id_hotel', $validated['id_hotel'])
                 ->exists();
 
         if ($already) {
             return response()->json([
-                'message' => 'This kamar is already on your wishlist',
+                'message' => 'Hotel ini sudah ada di wishlist kamu',
             ], 409);
         }
 
         $wishList = Wishlist::create([
             'id_user'  => $userId,
-            'id_kamar' => $validated['id_kamar'],
+            'id_hotel' => $validated['id_hotel'],
         ]);
 
         return response()->json([
@@ -54,7 +54,7 @@ class WishListController extends Controller
 
     public function show(string $id)
     {
-        $wishList = Wishlist::find($id);
+        $wishList = Wishlist::with('hotel')->find($id);
 
         if (!$wishList) {
             return response()->json([
