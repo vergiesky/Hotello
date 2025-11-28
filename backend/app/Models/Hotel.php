@@ -35,9 +35,8 @@ class Hotel extends Model
         return $this->hasMany(FasilitasHotel::class, 'id_hotel', 'id_hotel');
     }
 
-    // public function icons()
-    // {
-    //     return $this->belongsToMany(Icon::class, 'fasilitas_hotel', 'id_hotel', 'id_hotel')->withPivot(['nama_fasilitas', 'keterangan_fasilitas_hotel'])->withTimestamps();
-    //     // withPivot digunakan untuk menyimpan kolom tambahan selain FK
-    // }
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class, 'id_hotel', 'id_hotel');
+    }
 }

@@ -13,7 +13,7 @@ class FasilitasKamarController extends Controller
      */
     public function index()
     {
-        $fasilitasKamar = FasilitasKamar::all();
+        $fasilitasKamar = FasilitasKamar::with('kamar', 'icon')->get();
 
         return response()->json([
             'data' => $fasilitasKamar,
@@ -27,9 +27,9 @@ class FasilitasKamarController extends Controller
     {
         $validated = $request->validate([
             'id_kamar' => 'required|integer|exists:kamars,id_kamar',
-            'id_icon' => 'nullable|integer|exists:icons,id_icon',
+            'id_icon' => 'required|integer|exists:icons,id_icon',
             'nama_fasilitas_kamar' => 'required|string|max:255',
-            'keterangan_fasilitas_kamar' => 'nullable|string',
+            'keterangan_fasilitas_kamar' => 'required|string',
         ]);
 
         $fasilitasKamar = FasilitasKamar::create($validated);
@@ -45,7 +45,7 @@ class FasilitasKamarController extends Controller
      */
     public function show(string $id)
     {
-         $fasilitasKamar = FasilitasKamar::where('id_fasilitas_kamar', $id)->first();
+         $fasilitasKamar = FasilitasKamar::with('kamar', 'icon')->where('id_fasilitas_kamar', $id)->first();
 
         if (!$fasilitasKamar) {
             return response()->json([
@@ -73,9 +73,9 @@ class FasilitasKamarController extends Controller
 
         $validated = $request->validate([
             'id_kamar' => 'required|integer|exists:kamars,id_kamar',
-            'id_icon' => 'nullable|integer|exists:icons,id_icon',
+            'id_icon' => 'required|integer|exists:icons,id_icon',
             'nama_fasilitas_kamar' => 'required|string|max:255',
-            'keterangan_fasilitas_kamar' => 'nullable|string',
+            'keterangan_fasilitas_kamar' => 'required|string',
         ]);
 
         $fasilitasKamar->update($validated);

@@ -10,7 +10,7 @@ class HotelController extends Controller
 {
     public function index()
     {
-        $hotels = Hotel::all();
+        $hotels = Hotel::with('gambarHotels')->get();
         
         return response()->json([
             'data' => $hotels,
@@ -43,7 +43,7 @@ class HotelController extends Controller
      */
     public function show(string $id)
     {
-        $hotel = Hotel::where('id_hotel', $id)->first();
+        $hotel = Hotel::with('gambarHotels')->where('id_hotel', $id)->first();
 
         if (!$hotel) {
             return response()->json([

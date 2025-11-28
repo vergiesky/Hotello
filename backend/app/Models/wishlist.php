@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Hotel;
 
 class Wishlist extends Model
 {
@@ -14,7 +15,7 @@ class Wishlist extends Model
 
     protected $fillable = [
         'id_user',
-        'id_kamar',
+        'id_hotel',
     ];
 
     public function user()
@@ -22,8 +23,8 @@ class Wishlist extends Model
         return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
 
-    public function kamar()
+    public function hotel()
     {
-        return $this->belongsTo(Kamar::class, 'id_kamar', 'id_kamar');
+        return $this->belongsTo(Hotel::class, 'id_hotel', 'id_hotel');
     }
 }

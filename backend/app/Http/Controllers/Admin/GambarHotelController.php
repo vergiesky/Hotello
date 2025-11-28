@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\GambarHotel;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class GambarHotelController extends Controller
 {
@@ -13,7 +14,7 @@ class GambarHotelController extends Controller
      */
     public function index()
     {
-        $gambarHotel = GambarHotel::all();
+        $gambarHotel = GambarHotel::with('hotel')->get();
 
         return response()->json([
             'data' => $gambarHotel,
@@ -29,10 +30,17 @@ class GambarHotelController extends Controller
             'id_hotel' => 'required|integer|exists:hotels,id_hotel',
             'nama_gambar_hotel' => 'required|string|max:255',
             'keterangan_gambar_hotel' => 'nullable|string',
-            'file_path_gambar_hotel' => 'required|string|max:255',
+            'file_gambar' => 'required|file|mimes:png,jpg,jpeg,webp|max:4096',
         ]);
 
-        $gambarHotel = GambarHotel::create($validated);
+        $path = $request->file('file_gambar')->store('gambar_hotels', 'public');
+
+        $gambarHotel = GambarHotel::create([
+            'id_hotel' => $validated['id_hotel'],
+            'nama_gambar_hotel' => $validated['nama_gambar_hotel'],
+            'keterangan_gambar_hotel' => $validated['keterangan_gambar_hotel'] ?? null,
+            'file_path_gambar_hotel' => $path,
+        ]);
 
         return response()->json([
             'message' => 'Gambar hotel created successfully',
@@ -45,7 +53,7 @@ class GambarHotelController extends Controller
      */
     public function show(string $id)
     {
-        $gambarHotel = GambarHotel::where('id_gambar_hotel', $id)->first();
+        $gambarHotel = GambarHotel::with('hotel')->where('id_gambar_hotel', $id)->first();
 
         if (!$gambarHotel) {
             return response()->json([
@@ -75,10 +83,24 @@ class GambarHotelController extends Controller
             'id_hotel' => 'required|integer|exists:hotels,id_hotel',
             'nama_gambar_hotel' => 'required|string|max:255',
             'keterangan_gambar_hotel' => 'nullable|string',
-            'file_path_gambar_hotel' => 'required|string|max:255',
+            'file_gambar' => 'nullable|file|mimes:png,jpg,jpeg,webp|max:4096',
         ]);
 
-        $gambarHotel->update($validated);
+        $payload = [
+            'id_hotel' => $validated['id_hotel'],
+            'nama_gambar_hotel' => $validated['nama_gambar_hotel'],
+            'keterangan_gambar_hotel' => $validated['keterangan_gambar_hotel'] ?? null,
+        ];
+
+        if ($request->hasFile('file_gambar')) {
+            if ($gambarHotel->file_path_gambar_hotel && Storage::disk('public')->exists($gambarHotel->file_path_gambar_hotel)) {
+                Storage::disk('public')->delete($gambarHotel->file_path_gambar_hotel);
+            }
+            $path = $request->file('file_gambar')->store('gambar_hotels', 'public');
+            $payload['file_path_gambar_hotel'] = $path;
+        }
+
+        $gambarHotel->update($payload);
 
         return response()->json([
             'message' => 'Gambar hotel updated successfully',
@@ -97,6 +119,10 @@ class GambarHotelController extends Controller
             return response()->json([
                 'message' => 'Gambar hotel not found',
             ], 404);
+        }
+
+        if ($gambarHotel->file_path_gambar_hotel && Storage::disk('public')->exists($gambarHotel->file_path_gambar_hotel)) {
+            Storage::disk('public')->delete($gambarHotel->file_path_gambar_hotel);
         }
 
         $gambarHotel->delete();

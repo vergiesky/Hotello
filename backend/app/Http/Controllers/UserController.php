@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -25,10 +26,30 @@ class UserController extends Controller
             'no_telp' => 'sometimes|string|max:50',
             'email' => ['sometimes', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id_user, 'id_user')],
             'tanggal_lahir' => 'sometimes|date',
-            'user_profile' => 'sometimes|nullable|string',
+            'user_profile' => 'sometimes|nullable|image|max:2048',
+            'hapus_foto' => 'sometimes|boolean',
         ]);
 
-        $user->fill($validated)->save();
+        // nilai biasa
+        $user->fill(collect($validated)->except(['user_profile', 'hapus_foto'])->toArray());
+
+        // handle hapus foto
+        if ($request->boolean('hapus_foto') && $user->user_profile) {
+            Storage::disk('public')->delete($user->user_profile);
+            $user->user_profile = null;
+        }
+
+        // handle upload foto baru
+        if ($request->hasFile('user_profile')) {
+            // hapus foto lama jika ada
+            if ($user->user_profile) {
+                Storage::disk('public')->delete($user->user_profile);
+            }
+            $path = $request->file('user_profile')->store('profile_pictures', 'public');
+            $user->user_profile = $path;
+        }
+
+        $user->save();
 
         return response()->json([
             'message' => 'Profile updated successfully',
@@ -52,11 +73,30 @@ class UserController extends Controller
         }
 
         $user->update([
-            'password' => $request->password_baru,
+            'password' => Hash::make($request->password_baru),
         ]);
 
         return response()->json([
             'message' => 'Password changed successfully',
+        ], 200);
+    }
+
+    public function destroy(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->user_profile) {
+            Storage::disk('public')->delete($user->user_profile);
+        }
+
+        if (method_exists($user, 'tokens')) {
+            $user->tokens()->delete();
+        }
+
+        $user->delete();
+
+        return response()->json([
+            'message' => 'Account deleted successfully',
         ], 200);
     }
 }

@@ -13,7 +13,7 @@ class FasilitasHotelController extends Controller
      */
     public function index()
     {
-        $fasilitasHotel = FasilitasHotel::all();
+        $fasilitasHotel = FasilitasHotel::with('hotel', 'icon')->get();
 
         return response()->json([
             'data' => $fasilitasHotel,
@@ -27,9 +27,9 @@ class FasilitasHotelController extends Controller
     {
         $validated = $request->validate([
             'id_hotel' => 'required|integer|exists:hotels,id_hotel',
-            'id_icon' => 'nullable|integer|exists:icons,id_icon',
+            'id_icon' => 'required|integer|exists:icons,id_icon',
             'nama_fasilitas' => 'required|string|max:255',
-            'keterangan_fasilitas_hotel' => 'nullable|string',
+            'keterangan_fasilitas_hotel' => 'required|string',
         ]);
 
         $fasilitasHotel = FasilitasHotel::create($validated);
@@ -45,7 +45,7 @@ class FasilitasHotelController extends Controller
      */
     public function show(string $id)
     {
-        $fasilitasHotel = FasilitasHotel::where('id_fasilitas_hotel', $id)->first();
+        $fasilitasHotel = FasilitasHotel::with('hotel', 'icon')->where('id_fasilitas_hotel', $id)->first();
 
         if (!$fasilitasHotel) {
             return response()->json([
@@ -73,9 +73,9 @@ class FasilitasHotelController extends Controller
 
         $validated = $request->validate([
             'id_hotel' => 'required|integer|exists:hotels,id_hotel',
-            'id_icon' => 'nullable|integer|exists:icons,id_icon',
+            'id_icon' => 'required|integer|exists:icons,id_icon',
             'nama_fasilitas' => 'required|string|max:255',
-            'keterangan_fasilitas_hotel' => 'nullable|string',
+            'keterangan_fasilitas_hotel' => 'required|string',
         ]);
 
         $fasilitasHotel->update($validated);
