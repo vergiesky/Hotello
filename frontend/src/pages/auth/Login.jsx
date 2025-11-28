@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { SignIn } from "../../api/apiAuth";
 import { alertError, alertSuccess } from "../../lib/Alert";
+import { toastError } from "../../lib/Toast";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.email || !formData.password) {
-      alertError("Data belum lengkap", "Email dan password wajib diisi.");
+      toastError("Email dan password wajib diisi.");
       return;
     }
     setLoading(true);
@@ -72,7 +73,7 @@ export default function Login() {
 
         {/* Card Form */}
         <div className="bg-white rounded-2xl shadow-2xl p-8">
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} noValidate className="space-y-5">
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
                 Email

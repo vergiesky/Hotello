@@ -1,3 +1,5 @@
+// src/pages/customer/CustomerDashboard.jsx
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -7,7 +9,7 @@ import {
   Calendar,
   Minus,
   Plus,
-  Heart, // ⬅️ tambahkan
+  Heart,
 } from "lucide-react";
 
 import useAxios, { BASE_URL } from "../../api";
@@ -514,7 +516,7 @@ export default function CustomerDashboard() {
         </section>
       </main>
 
-      <footer className="w-full bg-gradient-to-br from-blue-700 via-blue-600 to-blue-700 text-white mt-16 border-t border-blue-500/30">
+      <footer className="w-full bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700 text-white mt-16 border-t border-blue-500/30">
         <div className="max-w-7xl mx-auto px-4 py-12">
           {/* Main Footer Content */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
@@ -692,7 +694,7 @@ export default function CustomerDashboard() {
           {/* Bottom Footer */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-sm text-blue-100">
-              © {new Date().getFullYear()} Hotello. All rights reserved.
+              ©️ {new Date().getFullYear()} Hotello. All rights reserved.
             </p>
           </div>
         </div>
