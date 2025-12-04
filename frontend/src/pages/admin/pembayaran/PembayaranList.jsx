@@ -29,6 +29,7 @@ function formatDate(value) {
   return `${day}-${month}-${year}`;
 }
 
+// Komponen badge status pembayaran
 function StatusBadge({ status }) {
   const normalized = (status || "").toLowerCase();
   const map = {
@@ -89,6 +90,7 @@ export default function PembayaranList() {
     setPage(1);
   }, [data.length, query]);
 
+  // Mengubah status pembayaran
   const handleMark = async (id, type) => {
     const confirm = await alertConfirm({
       title: type === "paid" ? "Tandai Paid?" : "Tandai Failed?",
@@ -107,6 +109,7 @@ export default function PembayaranList() {
           ? `/admin/pembayarans/mark-paid/${id}`
           : `/admin/pembayarans/mark-failed/${id}`;
       await useAxios.put(url);
+      // Update status di UI
       setSelectedStatus(type);
       setSelected((prev) =>
         prev ? { ...prev, status_pembayaran: type } : prev
@@ -120,6 +123,7 @@ export default function PembayaranList() {
     }
   };
 
+  // Filter & search
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return data;

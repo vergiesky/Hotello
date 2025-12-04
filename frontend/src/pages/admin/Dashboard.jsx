@@ -69,6 +69,8 @@ export default function Dashboard() {
   }, []);
 
   const summary = useMemo(() => {
+
+    // Filter pembayaran yang sudah dibayar
     const paidPayments = payments.filter(
       (p) => (p.status_pembayaran || "").toLowerCase() === "paid"
     );
@@ -208,8 +210,13 @@ export default function Dashboard() {
                 data={monthlyRevenue.data}
                 margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                {/*grid background*/}
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" /> 
+
+                {/*sumbu X atau bulan*/}
                 <XAxis dataKey="month" tick={{ fill: "#334155" }} />
+
+                {/*sumbu Y atau nilai pendapatan(juta)*/}
                 <YAxis
                   tick={{ fill: "#334155" }}
                   tickFormatter={(v) => `${Math.round(v / 1_000_000)} Jt`}
@@ -222,6 +229,8 @@ export default function Dashboard() {
                   labelFormatter={(label) => label}
                 />
                 <ReLegend formatter={() => "Total Penghasilan"} />
+
+                {/*Line utama*/}
                 <Line
                   type="monotone"
                   dataKey="revenue"
