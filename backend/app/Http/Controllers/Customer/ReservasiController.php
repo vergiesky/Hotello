@@ -14,6 +14,46 @@ use Illuminate\Support\Facades\Auth;
 
 class ReservasiController extends Controller
 {
+    public function availability(Request $request, string $hotelId)
+    {
+        $request->validate([
+            'check_in' => 'required|date|after_or_equal:today',
+            'check_out' => 'required|date|after:check_in',
+        ]);
+
+        $checkIn = Carbon::parse($request->check_in)->startOfDay();
+        $checkOut = Carbon::parse($request->check_out)->startOfDay();
+
+        $kamars = Kamar::where('id_hotel', $hotelId)->get();
+
+        $result = $kamars->map(function ($kamar) use ($checkIn, $checkOut) {
+            $terpakai = RincianReservasi::where('id_kamar', $kamar->id_kamar)
+                ->whereHas('reservasi', function ($q) use ($checkIn, $checkOut) {
+                    $q->whereNotIn('status_reservasi', ['cancelled'])
+                        ->where(function ($w) use ($checkIn, $checkOut) {
+                            $w->where('check_out', '>',  $checkIn)
+                                ->where('check_in',  '<',  $checkOut);
+                        });
+                })
+                ->sum('jumlah_kamar');
+
+            $stokTersisa = max(0, $kamar->stok_kamar - (int)$terpakai);
+
+            return [
+                'id_kamar' => $kamar->id_kamar,
+                'nama_kamar' => $kamar->nama_kamar,
+                'kapasitas' => $kamar->kapasitas,
+                'stok_kamar' => $kamar->stok_kamar,
+                'stok_tersedia' => $stokTersisa,
+                'harga' => $kamar->harga,
+                'deskripsi' => $kamar->deskripsi,
+            ];
+        });
+
+        return response()->json([
+            'data' => $result,
+        ], 200);
+    }
     // show all daftar reservasi
     public function index()
     {
@@ -23,6 +63,7 @@ class ReservasiController extends Controller
         $reservasi = Reservasi::with([
             'rincianReservasis.kamar', // relasi Reservasi -> rincianReservasi -> Kamar
             'rincianReservasis.kamar.hotel', // relasi Reservasi -> rincianReservasi -> Kamar -> hotel
+            'pembayaran', // relasi pembayaran untuk cek status pembayaran terbaru
         ])
         ->where('id_user', $userId) // ambil data reservasi sesuai user id
         ->orderByDesc('id_reservasi') // urutin dari id_resrvasi yang terbesar (terbaru)

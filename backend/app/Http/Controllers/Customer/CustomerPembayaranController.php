@@ -18,7 +18,7 @@ class CustomerPembayaranController extends Controller
         $userId = Auth::id();
 
         // eager load reservasinya supaya kelihatan status & total
-        $pembayaran = Pembayaran::with(['reservasi'])
+        $pembayaran = Pembayaran::with(['reservasi.rincianReservasis.kamar.hotel'])
             ->whereHas('reservasi', function ($q) use ($userId) {
                 $q->where('id_user', $userId);
             })

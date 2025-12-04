@@ -9,16 +9,12 @@ use App\Models\Pembayaran;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ReviewController extends Controller
 {
     public function index(Request $request)
     {
-        // // $review = $request->user()->reviews;
-        // $review = Auth::user()->reviews; // bentuk lain
-
-        // return response()->json($review);
-
         $query = Review::with(['user', 'kamar']);
 
         if ($request->filled('id_kamar')) {
@@ -35,25 +31,6 @@ class ReviewController extends Controller
     // Create Review
     public function store(Request $request)
     {
-        // $userId = Auth::id();
-
-        // $validated = $request->validate([
-        //     'id_pembayaran' => 'required|exists:pembayarans,id_pembayaran',
-        //     'id_kamar' => 'required|exists:kamars,id_kamar',
-        //     'komentar' => 'nullable|string',
-        //     'rating' => 'required|numeric|between:0,5',
-        //     'file_path_review' => 'nullable|string',
-        //     'tanggal_review' => 'required|date',
-        // ]);
-        // $validated['id_user'] = $userId; // tambahkan id_user
-
-        // $review = Review::create($validated);
-
-        // return response()->json([
-        //     'message' => 'Review added succesfully',
-        //     'data' => $review,
-        // ], 201);
-
         $userId = Auth::id();
 
         $validated = $request->validate([
@@ -61,7 +38,7 @@ class ReviewController extends Controller
             'id_kamar' => 'required|integer|exists:kamars,id_kamar',
             'rating' => 'required|numeric|min:0|max:5',
             'komentar' => 'nullable|string',
-            'file_path_review' => 'nullable|string|max:255',
+            'file_path_review' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         // ambil pembayaran + reservasi + rincian dan pastikan milik user
@@ -118,13 +95,18 @@ class ReviewController extends Controller
             ], 422);
         }
 
+        $path = null;
+        if ($request->hasFile('file_path_review')) {
+            $path = $request->file('file_path_review')->store('review_images', 'public');
+        }
+
         $review = Review::create([
             'id_pembayaran' => $validated['id_pembayaran'],
             'id_user' => $userId,
             'id_kamar' => $validated['id_kamar'],
             'komentar' => $validated['komentar'] ?? null,
             'rating' => $validated['rating'],
-            'file_path_review'=> $validated['file_path_review'] ?? null,
+            'file_path_review'=> $path,
             'tanggal_review' => now()->toDateString(),
         ]);
 
@@ -136,20 +118,7 @@ class ReviewController extends Controller
 
     // read review
     public function show(string $id)
-    {
-        // $review = Review::find($id);
-        // // $review = Review::where('id_review', $id)->first(); // bentuk lain search id
-
-        // if (!$review) {
-        //     return response()->json([
-        //         'message' => 'Review not found',
-        //     ], 404);
-        // }
-
-        // return response()->json([
-        //     'data' => $review
-        // ]);
-        
+    {   
         $review = Review::with(['user', 'kamar'])
             ->where('id_review', $id)
             ->first();
@@ -168,39 +137,12 @@ class ReviewController extends Controller
     // Update Review
     public function update(Request $request, string $id)
     {
-        // $review = Review::find($id);
-
-        // if (!$review) {
-        //     return response()->json([
-        //         'message' => 'Review not found',
-        //     ], 404);
-        // }
-
-        // $userId = Auth::id();
-
-        // $validated = $request->validate([
-        //     'id_pembayaran' => 'required|exists:pembayarans,id_pembayaran',
-        //     'id_kamar' => 'required|exists:kamars,id_kamar',
-        //     'komentar' => 'nullable|text',
-        //     'rating' => 'required|numeric|between:0,5',
-        //     'file_path_review' => 'nullable|string',
-        //     'tanggal_review' => 'required|date',
-        // ]);
-        // $validated['id_user'] = $userId; // tambahkan id_user
-
-        // $review->update($validated);
-
-        // return response()->json([
-        //     'message' => 'Review updated succesfully',
-        //     'data' => $review->fresh(), // ganti dengan data/objek baru
-        // ]);
-
         $userId = Auth::id();
 
         $validated = $request->validate([
             'rating' => 'required|numeric|min:0|max:5',
             'komentar' => 'nullable|string|max:500',
-            'file_path_review' => 'nullable|string|max:255',
+            'file_path_review' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
 
@@ -218,11 +160,20 @@ class ReviewController extends Controller
             ], 403);
         }
 
-        $review->update([
+        $updateData = [
             'rating' => (float)$validated['rating'],
             'komentar' => $validated['komentar'] ?? $review->komentar,
-            'file_path_review' => $validated['file_path_review'] ?? $review->file_path_review,
-        ]);
+        ];
+
+        if ($request->hasFile('file_path_review')) {
+            // hapus lama jika ada
+            if ($review->file_path_review) {
+                Storage::disk('public')->delete($review->file_path_review);
+            }
+            $updateData['file_path_review'] = $request->file('file_path_review')->store('review_images', 'public');
+        }
+
+        $review->update($updateData);
 
         return response()->json([
             'message' => 'Review updated successfully',
@@ -233,20 +184,6 @@ class ReviewController extends Controller
     // Delete Review
     public function destroy(string $id)
     {
-        // $review = Review::find($id);
-
-        // if (!$review) {
-        //     return response()->json([
-        //         'message' => 'Review not found',
-        //     ], 404);
-        // }
-
-        // $review->delete();
-
-        // return response()->json([
-        //     'message' => 'Review deleted succesfully',
-        // ]);
-
         $userId = Auth::id();
 
         $review = Review::where('id_review', $id)->first();

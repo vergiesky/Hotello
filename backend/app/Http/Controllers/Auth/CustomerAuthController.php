@@ -37,13 +37,9 @@ class CustomerAuthController extends Controller
 
         $customer = Customer::create(['id_user' => $user->id_user]);
 
-        $token = $user->createToken('Personal Access Token', ['customer'])->plainTextToken;
-
         return response()->json([
             'user' => $user,
             'customer' => $customer,
-            'token' => $token,
-            'message' => 'Customer registered successfully',
         ], 201);
     }
 }
