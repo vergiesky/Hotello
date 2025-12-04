@@ -26,18 +26,11 @@ class UserController extends Controller
             'no_telp' => 'sometimes|string|max:50',
             'email' => ['sometimes', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id_user, 'id_user')],
             'tanggal_lahir' => 'sometimes|date',
-            'user_profile' => 'sometimes|nullable|image|max:2048',
-            'hapus_foto' => 'sometimes|boolean',
+            'user_profile' => 'sometimes|nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         // nilai biasa
         $user->fill(collect($validated)->except(['user_profile', 'hapus_foto'])->toArray());
-
-        // handle hapus foto
-        if ($request->boolean('hapus_foto') && $user->user_profile) {
-            Storage::disk('public')->delete($user->user_profile);
-            $user->user_profile = null;
-        }
 
         // handle upload foto baru
         if ($request->hasFile('user_profile')) {

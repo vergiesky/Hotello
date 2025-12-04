@@ -17,8 +17,14 @@ class AdminAuthController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email', // email tidak boleh duplikat di tabel users kolom email
             'password' => 'required|string|min:8',
             'tanggal_lahir' => 'required|date', // tahun-bulan-tanggal
-            'user_profile' => 'nullable|string',
+            'user_profile' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',  //mimes memastikan file yang diupload benar-benar file gambar JPEG atau PNG berdasarkan kontennya, bukan hanya nama filenya
         ]);
+
+        $profilePath = null;
+        if ($request->hasFile('user_profile')) {
+            // simpan di storage/app/public/profile_pictures
+            $profilePath = $request->file('user_profile')->store('profile_pictures', 'public');
+        }
 
         $user = User::create([
             'nama' => $request->nama,
@@ -26,20 +32,15 @@ class AdminAuthController extends Controller
             'email' => $request->email,
             'password' => $request->password,
             'tanggal_lahir' => $request->tanggal_lahir,
-            'user_profile' => $request->user_profile,
+            'user_profile' => $profilePath,
         ]);
 
         // tandai sebagai admin
         $admin = Admin::create(['id_user' => $user->id_user]);
 
-        // buat token biar auto login abis register
-        $token = $user->createToken('Personal Access Token', ['admin'])->plainTextToken;
-
         return response()->json([
             'user' => $user,
             'admin' => $admin,
-            'token' => $token,
-            'message' => 'Admin registered successfully',
         ], 201);
     }
 }
