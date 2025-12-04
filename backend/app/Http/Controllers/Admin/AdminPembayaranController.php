@@ -14,7 +14,11 @@ class AdminPembayaranController extends Controller
      */
     public function index()
     {
-        $pembayaran = Pembayaran::with('reservasi')->orderByDesc('id_pembayaran')->get();
+        $pembayaran = Pembayaran::with([
+            'reservasi',
+            'reservasi.user',
+            'reservasi.rincianReservasis.kamar.hotel',
+        ])->orderByDesc('id_pembayaran')->get();
 
         return response()->json([
             'data' => $pembayaran,
@@ -26,7 +30,11 @@ class AdminPembayaranController extends Controller
      */
     public function show(string $id)
     {
-        $pembayaran = Pembayaran::with('reservasi')->where('id_pembayaran', $id)->first();
+        $pembayaran = Pembayaran::with([
+            'reservasi',
+            'reservasi.user',
+            'reservasi.rincianReservasis.kamar.hotel',
+        ])->where('id_pembayaran', $id)->first();
 
         if (!$pembayaran) {
             return response()->json([

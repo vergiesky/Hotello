@@ -19,8 +19,16 @@ class AuthController extends Controller
         // cari user by email
         $user = User::where('email', $request->email)->first(); // first artinya ambil satu baris pertama yang ditemukan
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'User Not Found'], 401);
+        if (!$user) {
+            return response()->json([
+                'message' => 'User tidak ditemukan',
+            ], 404);
+        }
+
+        if (!Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'message' => 'Password salah',
+            ], 401);
         }
 
         // cek apakah user punya relasi di tabel admins atau tidak
@@ -32,7 +40,6 @@ class AuthController extends Controller
             'detail' => $user,
             'token' => $token,
             'abilities' => $abilities,
-            'message' => 'Login successfully',
         ]);
     }
 

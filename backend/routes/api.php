@@ -31,6 +31,11 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logo
 Route::get('/hotels', [HotelController::class, 'index']);
 Route::get('/hotels/{id}', [HotelController::class, 'show']);
 Route::get('/hotel-detail/{id}', [ShowHotelController::class, 'show']);
+Route::get('/availability/{hotelId}', [ReservasiController::class, 'availability']);
+
+// review public (baca saja)
+Route::get('/reviews', [ReviewController::class, 'index']); // tampil seluruh review
+Route::get('/reviews/{id}', [ReviewController::class, 'show']); // tampil 1 review
 
 
 // kamar public
@@ -123,8 +128,6 @@ Route::middleware(['auth:sanctum', 'ability:customer'])->group(function () {
     Route::delete('/pembayarans/delete/{id}', [CustomerPembayaranController::class, 'destroy']);
 
     // memberi review
-    Route::get('/reviews', [ReviewController::class, 'index']); // tampil seluruh review
-    Route::get('/reviews/{id}', [ReviewController::class, 'show']); // tampil 1 review
     Route::post('/reviews/create', [ReviewController::class, 'store']);
     Route::put('/reviews/update/{id}', [ReviewController::class, 'update']);
     Route::delete('/reviews/delete/{id}', [ReviewController::class, 'destroy']);

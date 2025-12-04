@@ -18,7 +18,7 @@ class ShowHotelController extends Controller
 
             // kamar + gambar + fasilitas + review user
             'kamars.gambarKamars',
-            'kamars.fasilitasKamar',
+            'kamars.fasilitasKamar.icon',
             'kamars.reviews.user:id_user,nama', // relasi review + user
 
         ])->where('id_hotel', $id)->first();

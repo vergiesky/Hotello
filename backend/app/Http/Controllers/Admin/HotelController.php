@@ -10,7 +10,8 @@ class HotelController extends Controller
 {
     public function index()
     {
-        $hotels = Hotel::with('gambarHotels')->get();
+        // Sertakan kamar supaya frontend bisa hitung harga termurah
+        $hotels = Hotel::with(['gambarHotels', 'kamars'])->get();
         
         return response()->json([
             'data' => $hotels,
