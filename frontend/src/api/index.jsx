@@ -6,7 +6,7 @@ const useAxios = axios.create({
     baseURL: `${BASE_URL}/api`,
 });
 
-// inject bearer token dari localStorage
+// buat ambil token dari local storage lalu otomatis tambahin header Authorization: Bearer <token> ke setiap request yang memakai useAxios
 useAxios.interceptors.request.use((config) => {
     const token = localStorage.getItem("token");
     if (token) {
