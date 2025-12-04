@@ -1,23 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Pencil, Trash } from "lucide-react";
-import NavbarAdmin from "../../../components/NavbarAdmin";
-import useAxios from "../../../api";
-import { alertConfirm, alertError, alertSuccess } from "../../../lib/Alert";
+import { Pencil, Trash, Search } from "lucide-react";
+import NavbarAdmin from "../../../components/admin/NavbarAdmin";
+import AdminPagination from "../../../components/admin/AdminPagination";
+import { alertConfirm, alertSuccess } from "../../../lib/Alert";
+import { toastError } from "../../../lib/Toast";
+import {
+  fetchFasilitasKamar,
+  deleteFasilitasKamar,
+} from "../../../api/admin/apiAdminFasilitasKamar";
 
 export default function FasilitasKamar() {
   const navigate = useNavigate();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const start = (page - 1) * pageSize;
 
   const fetchData = async () => {
     try {
-      const res = await useAxios.get("/fasilitas-kamar");
-      console.log(res.data);
-      setItems(res.data?.data || []);
+      const res = await fetchFasilitasKamar();
+      setItems(res?.data || res || []);
     } catch (err) {
       console.error(err);
-      alertError("Gagal memuat fasilitas kamar", "Silakan coba lagi.");
+      toastError("Gagal memuat fasilitas kamar. Silakan coba lagi.");
     } finally {
       setLoading(false);
     }
@@ -26,6 +34,22 @@ export default function FasilitasKamar() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    setPage(1);
+  }, [items.length, query]);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return items;
+    return items.filter((item) => {
+      const room = item.kamar?.nama_kamar || item.nama_kamar || "";
+      const name = item.nama_fasilitas_kamar || item.nama_fasilitas || "";
+      const desc = item.keterangan_fasilitas_kamar || item.deskripsi || "";
+      const fields = [room, name, desc].join(" ").toLowerCase();
+      return fields.includes(q);
+    });
+  }, [items, query]);
 
   const handleDelete = async (id) => {
     const confirm = await alertConfirm({
@@ -37,31 +61,52 @@ export default function FasilitasKamar() {
     if (!confirm.isConfirmed) return;
 
     try {
-      await useAxios.delete(`/fasilitas-kamar/delete/${id}`);
+      await deleteFasilitasKamar(id);
       alertSuccess("Berhasil", "Fasilitas dihapus.");
       fetchData();
     } catch (err) {
       console.error(err);
-      alertError("Gagal", "Tidak bisa menghapus fasilitas.");
+      const msg =
+        err?.response?.data?.message ||
+        (err?.response?.data?.errors &&
+          Object.values(err.response.data.errors).flat().join("\n")) ||
+        "Tidak bisa menghapus fasilitas.";
+      toastError(msg);
     }
   };
 
   return (
-    <div className="min-h-screen flex bg-[#f4f6fb] text-slate-800">
+    <div className="min-h-screen flex flex-col md:flex-row bg-[#f4f6fb] text-slate-800">
       <NavbarAdmin />
 
-      <main className="flex-1 p-8">
+      <main className="flex-1 w-full p-6 md:p-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-          <div>
-            <h2 className="text-2xl font-semibold text-slate-900">Manajemen Fasilitas Kamar</h2>
-            <p className="text-slate-500 text-sm">Kelola fasilitas yang dimiliki setiap kamar.</p>
+          <div className="flex-1">
+            <h2 className="text-3xl font-bold text-slate-900">
+              Manajemen Fasilitas Kamar
+            </h2>
+            <p className="text-slate-500">
+              Kelola fasilitas yang dimiliki setiap kamar
+            </p>
           </div>
-          <button
-            onClick={() => navigate("/admin/fasilitas-kamar/create")}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition"
-          >
-            <span className="text-lg leading-none">+</span> Tambah Fasilitas
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+            <div className="relative">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Cari kamar, fasilitas, deskripsi..."
+                className="pl-9 pr-3 py-2 w-full sm:w-64 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+              />
+            </div>
+            <button
+              onClick={() => navigate("/admin/fasilitas-kamar/create")}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold shadow hover:bg-blue-700 transition"
+            >
+              <span className="text-lg leading-none">+</span> Tambah Fasilitas
+            </button>
+          </div>
         </div>
 
         <div className="bg-white rounded-2xl shadow border border-slate-100 overflow-hidden">
@@ -71,34 +116,53 @@ export default function FasilitasKamar() {
                 <tr>
                   <th className="px-4 py-3 text-left font-semibold">ID</th>
                   <th className="px-4 py-3 text-left font-semibold">Kamar</th>
-                  <th className="px-4 py-3 text-left font-semibold">Nama Fasilitas</th>
-                  <th className="px-4 py-3 text-left font-semibold">Deskripsi</th>
+                  <th className="px-4 py-3 text-left font-semibold">
+                    Nama Fasilitas
+                  </th>
+                  <th className="px-4 py-3 text-left font-semibold">
+                    Deskripsi
+                  </th>
                   <th className="px-4 py-3 text-center font-semibold">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {loading ? (
                   <tr>
-                    <td colSpan="5" className="px-4 py-6 text-center text-slate-500">
+                    <td
+                      colSpan="5"
+                      className="px-4 py-6 text-center text-slate-500"
+                    >
                       Memuat data...
                     </td>
                   </tr>
-                ) : items.length === 0 ? (
+                ) : filtered.length === 0 ? (
                   <tr>
-                    <td colSpan="5" className="px-4 py-6 text-center text-slate-500">
+                    <td
+                      colSpan="5"
+                      className="px-4 py-6 text-center text-slate-500"
+                    >
                       Belum ada fasilitas kamar.
                     </td>
                   </tr>
                 ) : (
-                  items.map((item, idx) => (
-                    <tr key={item.id_fasilitas_kamar || item.id || idx} className="hover:bg-slate-50">
-                      <td className="px-4 py-3">{item.id_fasilitas_kamar || item.id || idx + 1}</td>
+                  filtered.slice(start, start + pageSize).map((item, idx) => (
+                    <tr
+                      key={item.id_fasilitas_kamar || item.id || idx}
+                      className="hover:bg-slate-50"
+                    >
+                      <td className="px-4 py-3">
+                        {item.id_fasilitas_kamar || item.id || start + idx + 1}
+                      </td>
                       <td className="px-4 py-3 font-semibold text-slate-900">
                         {item.kamar?.nama_kamar || item.nama_kamar || "-"}
                       </td>
-                      <td className="px-4 py-3 text-slate-800">{item.nama_fasilitas_kamar}</td>
+                      <td className="px-4 py-3 text-slate-800">
+                        {item.nama_fasilitas_kamar}
+                      </td>
                       <td className="px-4 py-3 text-slate-700">
-                        {item.keterangan_fasilitas_kamar || item.deskripsi || "-"}
+                        {item.keterangan_fasilitas_kamar ||
+                          item.deskripsi ||
+                          "-"}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-center gap-3">
@@ -106,7 +170,11 @@ export default function FasilitasKamar() {
                             type="button"
                             className="text-blue-600 hover:text-blue-700"
                             onClick={() =>
-                              navigate(`/admin/fasilitas-kamar/edit/${item.id_fasilitas_kamar || item.id || ""}`)
+                              navigate(
+                                `/admin/fasilitas-kamar/edit/${
+                                  item.id_fasilitas_kamar || item.id || ""
+                                }`
+                              )
                             }
                           >
                             <Pencil className="w-4 h-4" />
@@ -114,7 +182,9 @@ export default function FasilitasKamar() {
                           <button
                             type="button"
                             className="text-red-500 hover:text-red-600"
-                            onClick={() => handleDelete(item.id_fasilitas_kamar || item.id)}
+                            onClick={() =>
+                              handleDelete(item.id_fasilitas_kamar || item.id)
+                            }
                           >
                             <Trash className="w-4 h-4" />
                           </button>
@@ -126,6 +196,12 @@ export default function FasilitasKamar() {
               </tbody>
             </table>
           </div>
+          <AdminPagination
+            page={page}
+            totalItems={filtered.length}
+            pageSize={pageSize}
+            onChange={setPage}
+          />
         </div>
       </main>
     </div>

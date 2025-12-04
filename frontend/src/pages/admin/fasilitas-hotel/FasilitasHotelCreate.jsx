@@ -1,7 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useAxios from "../../../api";
-import { alertError, alertSuccess } from "../../../lib/Alert";
+import { alertConfirm, alertSuccess } from "../../../lib/Alert";
+import { toastError } from "../../../lib/Toast";
+import AdminFormShell from "../../../components/admin/AdminFormShell";
+import AdminActionBar from "../../../components/admin/AdminActionBar";
+import {
+  AdminInput,
+  AdminSelect,
+  AdminTextarea,
+} from "../../../components/admin/AdminFormFields";
+import { fetchIcons } from "../../../api/admin/apiAdminIcons";
+import {
+  createFasilitasHotel,
+} from "../../../api/admin/apiAdminFasilitasHotel";
+import { fetchHotels } from "../../../api/admin/apiAdminHotels";
 
 export default function FasilitasHotelCreate() {
   const navigate = useNavigate();
@@ -21,38 +33,56 @@ export default function FasilitasHotelCreate() {
   };
 
   useEffect(() => {
-    const fetchHotels = async () => {
+    const fetchHotelsData = async () => {
       try {
-        const res = await useAxios.get("/hotels");
-        console.log(res.data);
-        setHotels(res.data?.data || []);
+        const res = await fetchHotels();
+        setHotels(res?.data || res || []);
       } catch (err) {
         console.error(err);
-        alertError("Gagal memuat hotel", "Silakan coba lagi.");
+        toastError("Gagal memuat hotel. Silakan coba lagi.");
       }
     };
-    const fetchIcons = async () => {
+    const fetchIconsData = async () => {
       try {
-        const res = await useAxios.get("/icons");
-        console.log(res.data);
-        setIcons(res.data?.data || []);
+        const res = await fetchIcons();
+        setIcons(res?.data || res || []);
       } catch (err) {
         console.error(err);
-        alertError("Gagal memuat icon", "Silakan coba lagi.");
+        toastError("Gagal memuat icon. Silakan coba lagi.");
       }
     };
-    fetchHotels();
-    fetchIcons();
+    fetchHotelsData();
+    fetchIconsData();
   }, []);
+
+  const validateForm = () => {
+    if (!form.id_hotel) return "Pilih hotel terlebih dahulu.";
+    if (!form.id_icon) return "Pilih icon fasilitas.";
+    if (!form.nama_fasilitas.trim()) return "Nama fasilitas wajib diisi.";
+    if (!form.keterangan_fasilitas_hotel.trim()) return "Deskripsi fasilitas wajib diisi.";
+    return "";
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationError = validateForm();
+    if (validationError) {
+      toastError(validationError);
+      return;
+    }
+    const confirm = await alertConfirm({
+      title: "Simpan data?",
+      text: "Data fasilitas hotel akan ditambahkan.",
+      confirmButtonText: "Ya, simpan",
+      cancelButtonText: "Batal",
+      icon: "question",
+    });
+    if (!confirm.isConfirmed) return;
     setLoading(true);
     try {
       const payload = { ...form };
-      const res = await useAxios.post("/fasilitas-hotel/create", payload);
-      console.log(res.data);
-      await alertSuccess("Berhasil", res.data?.message || "Fasilitas ditambahkan.");
+      const res = await createFasilitasHotel(payload);
+      await alertSuccess("Berhasil", res?.message || "Fasilitas ditambahkan.");
       setForm({
         id_hotel: "",
         id_icon: "",
@@ -67,133 +97,86 @@ export default function FasilitasHotelCreate() {
         (err?.response?.data?.errors &&
           Object.values(err.response.data.errors).flat().join("\n")) ||
         "Gagal menambahkan fasilitas.";
-      alertError("Error", msg);
+      toastError(msg);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-blue-100 text-gray-900 py-10 px-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-8 text-center md:text-left">
-          <p className="text-sm uppercase tracking-[0.25em] text-blue-500 mb-2 font-semibold">
-            Admin Panel
-          </p>
-          <h1 className="text-3xl font-bold text-gray-900">Tambah Fasilitas Hotel</h1>
-          <p className="text-gray-600 mt-2">
-            Lengkapi data fasilitas yang dimiliki hotel.
-          </p>
+    <AdminFormShell
+      title="Tambah Fasilitas Hotel"
+      subtitle="Lengkapi data fasilitas hotel di bawah ini"
+    >
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <AdminSelect
+            label="Pilih Hotel"
+            required
+            name="id_hotel"
+            value={form.id_hotel}
+            onChange={handleChange}
+          >
+            <option value="">Pilih hotel</option>
+            {hotels.map((h) => (
+              <option key={h.id_hotel} value={h.id_hotel}>
+                {h.nama_hotel}
+              </option>
+            ))}
+          </AdminSelect>
+
+          <AdminSelect
+            label="Icon Fasilitas"
+            required
+            name="id_icon"
+            value={form.id_icon}
+            onChange={handleChange}
+            hint="Pastikan icon sudah dibuat di menu Icon."
+          >
+            <option value="">Pilih icon</option>
+            {icons.map((ic) => (
+              <option key={ic.id_icon} value={ic.id_icon}>
+                {ic.nama_icon}
+              </option>
+            ))}
+          </AdminSelect>
+
+          <AdminInput
+            label="Nama Fasilitas"
+            required
+            type="text"
+            name="nama_fasilitas"
+            value={form.nama_fasilitas}
+            onChange={handleChange}
+            placeholder="Kolam Renang"
+          />
         </div>
 
-        <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Pilih Hotel <span className="text-blue-600">*</span>
-                </label>
-                <select
-                  name="id_hotel"
-                  value={form.id_hotel}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                  required
-                >
-                  <option value="">Pilih hotel</option>
-                  {hotels.map((h) => (
-                    <option key={h.id_hotel} value={h.id_hotel}>
-                      {h.nama_hotel}
-                    </option>
-                  ))}
-                </select>
-              </div>
+        <AdminTextarea
+          label="Deskripsi"
+          required
+          name="keterangan_fasilitas_hotel"
+          value={form.keterangan_fasilitas_hotel}
+          onChange={handleChange}
+          rows={4}
+          placeholder="Tuliskan deskripsi fasilitas..."
+        />
 
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Icon Fasilitas <span className="text-blue-600">*</span>
-                </label>
-                <select
-                  name="id_icon"
-                  value={form.id_icon}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                  required
-                >
-                  <option value="">Pilih icon</option>
-                  {icons.map((ic) => (
-                    <option key={ic.id_icon} value={ic.id_icon}>
-                      {ic.nama_icon}
-                    </option>
-                  ))}
-                </select>
-                <p className="text-xs text-gray-500">Pastikan icon sudah dibuat di menu Icon.</p>
-              </div>
-
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Nama Fasilitas <span className="text-blue-600">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="nama_fasilitas"
-                  value={form.nama_fasilitas}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                  placeholder="Kolam Renang"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Deskripsi <span className="text-blue-600">*</span>
-              </label>
-              <textarea
-                name="keterangan_fasilitas_hotel"
-                value={form.keterangan_fasilitas_hotel}
-                onChange={handleChange}
-                rows={4}
-                className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                placeholder="Tuliskan deskripsi fasilitas..."
-                required
-              />
-            </div>
-
-            <div className="flex flex-wrap gap-3 pt-2">
-              <button
-                type="submit"
-                disabled={loading}
-                className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold shadow-lg hover:from-blue-700 hover:to-blue-600 transition disabled:opacity-60"
-              >
-                {loading ? "Menyimpan..." : "Simpan Fasilitas"}
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  setForm({
-                    id_hotel: "",
-                    id_icon: "",
-                    nama_fasilitas: "",
-                    keterangan_fasilitas_hotel: "",
-                  })
-                }
-                className="inline-flex items-center justify-center px-5 py-3 rounded-xl border-2 border-gray-200 text-gray-700 hover:bg-gray-50 transition"
-              >
-                Reset
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate(-1)}
-                className="inline-flex items-center justify-center px-5 py-3 rounded-xl border-2 border-gray-200 text-gray-700 hover:bg-gray-50 transition"
-              >
-                Kembali
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+        <AdminActionBar
+          onSubmitLabel="Simpan Fasilitas"
+          savingLabel="Menyimpan..."
+          saving={loading}
+          onReset={() =>
+            setForm({
+              id_hotel: "",
+              id_icon: "",
+              nama_fasilitas: "",
+              keterangan_fasilitas_hotel: "",
+            })
+          }
+          onBack={() => navigate(-1)}
+        />
+      </form>
+    </AdminFormShell>
   );
 }
