@@ -12,6 +12,12 @@ export async function updateUser(payload) {
   return res.data;
 }
 
+// Perbarui foto profil (FormData dengan _method PATCH)
+export async function updateFoto(payload) {
+  const res = await useAxios.post("/user/foto", payload);
+  return res.data;
+}
+
 // Ubah password user
 export async function updatePassword(payload) {
   const res = await useAxios.post("/user/password", payload);

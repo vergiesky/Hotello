@@ -8,6 +8,7 @@ import { formatDateLong, toInputDate } from "../lib/formatDate";
 import {
   fetchUser,
   updateUser,
+  updateFoto, // pisahin update foto
   updatePassword,
   deleteUser,
 } from "../api/apiUser";
@@ -19,6 +20,7 @@ import ProfileDangerZone from "../components/profile/ProfileDangerZone";
 import {
   normalizeUser,
   buildProfileFormData,
+  buildPhotoProfileFormData, // bikin update foto
   resetProfileState,
   resetPasswordState,
   hasProfileChanges,
@@ -146,6 +148,7 @@ export default function Profile() {
     setHapusFoto(false);
   };
 
+  // Update profil
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
 
@@ -168,8 +171,8 @@ export default function Profile() {
         email,
         noTelp,
         tanggalLahir,
-        avatarFile: newAvatarFile,
-        hapusFoto,
+        // avatarFile: newAvatarFile,
+        // hapusFoto,
       });
 
       const res = await updateUser(formData);
@@ -177,15 +180,15 @@ export default function Profile() {
       setUser(updatedUser);
       localStorage.setItem("user", JSON.stringify(updatedUser));
 
-      if (updatedUser.user_profile) {
-        setCurrentAvatar(`${BASE_URL}/storage/${updatedUser.user_profile}`);
-      } else {
-        setCurrentAvatar(null);
-      }
-      setNewAvatarFile(null);
-      setNewAvatarPreview(null);
-      setHapusFoto(false);
-      setIsEditingProfile(false);
+      // if (updatedUser.user_profile) {
+      //   setCurrentAvatar(`${BASE_URL}/storage/${updatedUser.user_profile}`);
+      // } else {
+      //   setCurrentAvatar(null);
+      // }
+      // setNewAvatarFile(null);
+      // setNewAvatarPreview(null);
+      // setHapusFoto(false);
+      // setIsEditingProfile(false);
       setTanggalLahir(toInputDate(updatedUser.tanggal_lahir));
 
       alertSuccess("Berhasil", "Profil berhasil diperbarui");
@@ -210,23 +213,23 @@ export default function Profile() {
       return;
     }
 
-    const validationError = validateProfileFields({
-      nama,
-      email,
-      noTelp,
-      tanggalLahir,
-    });
-    if (validationError) {
-      alertError("Validasi gagal", validationError);
-      return;
-    }
+    // const validationError = validateProfileFields({
+    //   nama,
+    //   email,
+    //   noTelp,
+    //   tanggalLahir,
+    // });
+    // if (validationError) {
+    //   alertError("Validasi gagal", validationError);
+    //   return;
+    // }
 
     if (
       !hasProfileChanges({
-        nama,
-        email,
-        noTelp,
-        tanggalLahir,
+        // nama,
+        // email,
+        // noTelp,
+        // tanggalLahir,
         current: user,
         avatarFile: newAvatarFile,
         hapusFoto,
@@ -238,16 +241,16 @@ export default function Profile() {
 
     setLoadingProfile(true);
     try {
-      const formData = buildProfileFormData({
-        nama,
-        email,
-        noTelp,
-        tanggalLahir,
+      const formData = buildPhotoProfileFormData({
+        // nama,
+        // email,
+        // noTelp,
+        // tanggalLahir,
         avatarFile: newAvatarFile,
         hapusFoto,
       });
 
-      const res = await updateUser(formData);
+      const res = await updateFoto(formData);
       const updatedUser = res?.data || res;
       setUser(updatedUser);
       localStorage.setItem("user", JSON.stringify(updatedUser));

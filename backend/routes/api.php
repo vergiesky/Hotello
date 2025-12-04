@@ -46,6 +46,7 @@ Route::get('/kamars/{id}', [KamarController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
     // kompatibel dengan frontend customer/profile.jsx
     Route::get('/user', [UserController::class, 'show']);
+    Route::patch('/user/foto', [UserController::class, 'updateFoto']);
     Route::patch('/user', [UserController::class, 'update']);
     Route::delete('/user', [UserController::class, 'destroy'])->name('user.destroy'); // pastikan ada method destroy jika dipakai
     Route::post('/user/password', [UserController::class, 'updatePassword']);
@@ -88,8 +89,8 @@ Route::middleware(['auth:sanctum', 'ability:admin'])->group(function () {
     Route::get('/gambar-kamar', [GambarKamarController::class, 'index']);
     Route::get('/gambar-kamar/{id}', [GambarKamarController::class, 'show']);
     Route::post('/gambar-kamar/create', [GambarKamarController::class, 'store']);
-    Route::put  ('/gambar-kamar/update/{id}', [GambarKamarController::class, 'update']);
-    Route::delete('/gambar-kamar/delete/{id}', [GambarKamarController::class, 'destroy']);    
+    Route::put('/gambar-kamar/update/{id}', [GambarKamarController::class, 'update']);
+    Route::delete('/gambar-kamar/delete/{id}', [GambarKamarController::class, 'destroy']);
 
     // icon crud
     Route::get('/icons', [IconController::class, 'index']);

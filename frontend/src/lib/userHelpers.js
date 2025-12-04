@@ -17,14 +17,33 @@ export function buildProfileFormData({
   email,
   noTelp,
   tanggalLahir,
-  avatarFile,
-  hapusFoto,
+  // avatarFile,
+  // hapusFoto,
 }) {
   const formData = new FormData();
   formData.append("nama", nama || "");
   formData.append("email", email || "");
   formData.append("no_telp", noTelp || "");
   formData.append("tanggal_lahir", tanggalLahir || "");
+  formData.append("_method", "PATCH");
+
+  // if (hapusFoto) {
+  //   formData.append("hapus_foto", "1");
+  // }
+
+  // if (avatarFile) {
+  //   formData.append("user_profile", avatarFile);
+  // }
+
+  return formData;
+}
+
+// Update khusus Foto Profile
+export function buildPhotoProfileFormData({
+  avatarFile,
+  hapusFoto,
+}) {
+  const formData = new FormData();
   formData.append("_method", "PATCH");
 
   if (hapusFoto) {

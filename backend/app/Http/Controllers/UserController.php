@@ -16,21 +16,16 @@ class UserController extends Controller
         ], 200);
     }
 
-
-    public function update(Request $request)
+    public function updateFoto(Request $request)
     {
         $user = $request->user();
 
         $validated = $request->validate([
-            'nama' => 'sometimes|string|max:255',
-            'no_telp' => 'sometimes|string|max:50',
-            'email' => ['sometimes', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id_user, 'id_user')],
-            'tanggal_lahir' => 'sometimes|date',
             'user_profile' => 'sometimes|nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         // nilai biasa
-        $user->fill(collect($validated)->except(['user_profile', 'hapus_foto'])->toArray());
+        $user->fill(collect($validated)->toArray());
 
         // handle upload foto baru
         if ($request->hasFile('user_profile')) {
@@ -50,13 +45,68 @@ class UserController extends Controller
         ], 200);
     }
 
+    public function update(Request $request)
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'nama' => 'sometimes|string|max:255',
+            'no_telp' => 'sometimes|string|max:50',
+            'email' => ['sometimes', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id_user, 'id_user')],
+            'tanggal_lahir' => 'sometimes|date',
+        ]);
+
+        // nilai biasa
+        $user->fill(collect($validated)->toArray());
+
+        $user->save();
+
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'data'    => $user->fresh(),
+        ], 200);
+    }
+
+    // public function update(Request $request)
+    // {
+    //     $user = $request->user();
+
+    //     $validated = $request->validate([
+    //         'nama' => 'sometimes|string|max:255',
+    //         'no_telp' => 'sometimes|string|max:50',
+    //         'email' => ['sometimes', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id_user, 'id_user')],
+    //         'tanggal_lahir' => 'sometimes|date',
+    //         'user_profile' => 'sometimes|nullable|image|mimes:jpg,jpeg,png|max:2048',
+    //     ]);
+
+    //     // nilai biasa
+    //     $user->fill(collect($validated)->except(['user_profile', 'hapus_foto'])->toArray());
+
+    //     // handle upload foto baru
+    //     if ($request->hasFile('user_profile')) {
+    //         // hapus foto lama jika ada
+    //         if ($user->user_profile) {
+    //             Storage::disk('public')->delete($user->user_profile);
+    //         }
+    //         $path = $request->file('user_profile')->store('profile_pictures', 'public');
+    //         $user->user_profile = $path;
+    //     }
+
+    //     $user->save();
+
+    //     return response()->json([
+    //         'message' => 'Profile updated successfully',
+    //         'data'    => $user->fresh(),
+    //     ], 200);
+    // }
+
     public function updatePassword(Request $request)
     {
         $user = $request->user();
 
         $request->validate([
             'password_lama' => 'required|string',
-            'password_baru' => 'required|string|min:8|confirmed', 
+            'password_baru' => 'required|string|min:8|confirmed',
         ]);
 
         if (!Hash::check($request->password_lama, $user->password)) {
