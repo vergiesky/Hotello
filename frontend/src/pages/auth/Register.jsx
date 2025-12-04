@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { SignUpCustomer } from "../../api/apiAuth";
 import { alertError, alertSuccess } from "../../lib/Alert";
 import { passwordStrengthScore } from "../../lib/Password";
+import { toastError } from "../../lib/Toast";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -30,19 +31,61 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.password !== formData.password_confirmation) {
-      alertError("Password tidak cocok", "Password dan konfirmasi harus sama.");
+    // Cek nama kosong
+    if (!formData.nama) {
+      toastError("Isi nama terlebih dahulu!");
       return;
     }
 
-    if (
-      !formData.nama ||
-      !formData.email ||
-      !formData.password ||
-      !formData.no_telp ||
-      !formData.tanggal_lahir
-    ) {
-      alertError("Data belum lengkap", "Semua field wajib diisi.");
+    // Cek email kosong, validasi
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formData.email) {
+      toastError("Isi email terlebih dahulu!");
+      return;
+    }
+    
+    if (!emailRegex.test(formData.email)) {
+      toastError("Format email tidak valid!");
+      return;
+    }
+    
+    // Cek telepon kosong, validasi
+    if (!formData.no_telp) {
+      toastError("Isi nomor telepon terlebih dahulu!");
+      return;
+    }
+
+    if (!/[0-9]/.test(formData.no_telp)) {
+      toastError("Nomor Telepon tidak boleh selain angka!");
+      return;
+    }
+
+    if (formData.no_telp.length < 8) {
+      toastError("Nomor Telepon minimal 8 angka!");
+      return;
+    }
+
+    // Cek tanggal kosong
+    if (!formData.tanggal_lahir) {
+      toastError("Isi tanggal lahir terlebih dahulu!");
+      return;
+    }
+
+    // Cek password kosong, min.8
+    if (!formData.password) {
+      toastError("Isi password terlebih dahulu!");
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      toastError("Password minimal 8 karakter!");
+      return;
+    }
+
+    // Cek password dan konfirm
+    if (formData.password !== formData.password_confirmation) {
+      toastError("Password dan konfirmasi harus sama.");
       return;
     }
 
@@ -66,10 +109,10 @@ export default function Register() {
       navigate("/login");
     } catch (err) {
       const msg =
-        err?.message ||
-        (err?.errors && Object.values(err.errors).flat().join("\n")) ||
+        // err?.message ||
+        // (err?.errors && Object.values(err.errors).flat().join("\n")) ||
         "Registrasi gagal. Silakan coba lagi.";
-      alertError("Registrasi gagal", msg);
+      toastError(msg);
     } finally {
       setLoading(false);
     }
@@ -96,10 +139,11 @@ export default function Register() {
 
         {/* Card Form */}
         <div className="bg-white rounded-2xl shadow-2xl p-8">
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {/* noValidate untuk matiin default */}
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
-                Nama Lengkap
+                Nama Lengkap <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -114,7 +158,7 @@ export default function Register() {
 
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
-                Email
+                Email <span className="text-red-500">*</span>
               </label>
               <input
                 type="email"
@@ -130,7 +174,7 @@ export default function Register() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">
-                  No. Telepon
+                  No. Telepon <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="tel"
@@ -145,7 +189,7 @@ export default function Register() {
 
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">
-                  Tanggal Lahir
+                  Tanggal Lahir <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"
@@ -160,7 +204,7 @@ export default function Register() {
 
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
-                Password
+                Password <span className="text-red-500">*</span>
               </label>
               <input
                 type="password"
@@ -196,7 +240,7 @@ export default function Register() {
 
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
-                Konfirmasi Password
+                Konfirmasi Password <span className="text-red-500">*</span>
               </label>
               <input
                 type="password"
