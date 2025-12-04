@@ -19,7 +19,7 @@ import {
 import NavbarAdmin from "../../components/admin/NavbarAdmin";
 import { alertError } from "../../lib/Alert";
 import formatRupiah from "../../lib/formatRupiah";
-import { fetchPembayarans } from "../../api/admin/apiAdminPembayaran";
+import { fetchPembayarans } from "../../api/admin/apiAdminPembayarans";
 import { buildHotelDetail, buildMonthlyRevenue } from "../../lib/reportingHelpers";
 import SortToggle from "../../components/admin/SortToggle";
 import HotelRankingTable from "../../components/admin/HotelRankingTable";

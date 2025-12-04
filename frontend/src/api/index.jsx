@@ -1,0 +1,18 @@
+import axios from "axios";
+
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+  
+const useAxios = axios.create({
+    baseURL: `${BASE_URL}/api`,
+});
+
+// buat ambil token dari local storage lalu otomatis tambahin header Authorization: Bearer <token> ke setiap request yang memakai useAxios
+useAxios.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
+
+export default useAxios;

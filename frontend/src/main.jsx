@@ -9,14 +9,18 @@ import Register from "./pages/auth/Register.jsx";
 
 import CustomerDashboard from "./pages/customer/CustomerDashboard.jsx";
 import Wishlist from "./pages/customer/Wishlist.jsx";
-import Profile from "./pages/customer/Profile.jsx";  
-import Settings from "./pages/customer/Settings.jsx";
+import Profile from "./pages/Profile.jsx";  
+import Settings from "./pages/Settings.jsx";
 import About from "./pages/customer/About.jsx";
 import HotelDetail from "./pages/customer/HotelDetail.jsx";
 import Reservation from "./pages/customer/Reservation.jsx";
+import Payment from "./pages/customer/Payment.jsx";
+import ReservationHistory from "./pages/customer/ReservationHistory.jsx";
+import Terms from "./pages/Terms.jsx";
 import HotelCreate from "./pages/admin/hotel/HotelCreate.jsx";
 import HotelEdit from "./pages/admin/hotel/HotelEdit.jsx";
 import Hotel from "./pages/admin/hotel/Hotel.jsx";
+import Dashboard from "./pages/admin/Dashboard.jsx";
 import FasilitasHotel from "./pages/admin/fasilitas-hotel/FasilitasHotel.jsx";
 import FasilitasHotelCreate from "./pages/admin/fasilitas-hotel/FasilitasHotelCreate.jsx";
 import FasilitasHotelEdit from "./pages/admin/fasilitas-hotel/FasilitasHotelEdit.jsx";
@@ -35,6 +39,7 @@ import FasilitasKamarEdit from "./pages/admin/fasilitas-kamar/FasilitasKamarEdit
 import GambarKamarList from "./pages/admin/gambar-kamar/GambarKamarList.jsx";
 import GambarKamarCreate from "./pages/admin/gambar-kamar/GambarKamarCreate.jsx";
 import GambarKamarEdit from "./pages/admin/gambar-kamar/GambarKamarEdit.jsx";
+import PembayaranList from "./pages/admin/pembayaran/PembayaranList.jsx";
 
 import CustomerRoute from "./routes/CustomerRoute.jsx";
 import AdminRoute from "./routes/AdminRoute.jsx";
@@ -45,20 +50,20 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        {/* Home */}
+        {/* dashboard */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-        {/* AUTH */}
+        {/* auth */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Customer dashboard */}
+        {/* customer dashboard */}
         <Route
           path="/dashboard"
           element={<CustomerDashboard />}
         />
 
-        {/* Customer profil */}
+        {/* customer profil */}
         <Route
           path="/profile"
           element={
@@ -68,7 +73,7 @@ createRoot(document.getElementById("root")).render(
           }
         />
 
-        {/* Customer wishlist */}
+        {/* customer wishlist */}
         <Route
           path="/wishlist"
           element={
@@ -78,7 +83,7 @@ createRoot(document.getElementById("root")).render(
           }
         />
 
-        {/* Customer settings */}
+        {/* customer settings */}
         <Route
           path="/settings"
           element={
@@ -88,10 +93,10 @@ createRoot(document.getElementById("root")).render(
           }
         />
 
-        {/* Detail hotel (publik) */}
+        {/* detail hotel (publik) */}
         <Route path="/hotel/:id" element={<HotelDetail />} />
 
-        {/* Customer reservasi */}
+        {/* customer reservasi */}
         <Route
           path="/reservation/:hotelId"
           element={
@@ -100,15 +105,40 @@ createRoot(document.getElementById("root")).render(
             </CustomerRoute>
           }
         />
+        <Route
+          path="/reservations/history"
+          element={
+            <CustomerRoute>
+              <ReservationHistory />
+            </CustomerRoute>
+          }
+        />
+        <Route
+          path="/payment/:reservasiId"
+          element={
+            <CustomerRoute>
+              <Payment />
+            </CustomerRoute>
+          }
+        />
+        <Route path="/terms" element={<Terms />} />
 
          <Route
           path="/about"
           element={<About />}
         />
 
-        {/* ADMIN */}
+        {/* admin */}
         <Route
           path="/admin/dashboard"
+          element={
+            <AdminRoute>
+              <Dashboard />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/hotels"
           element={
             <AdminRoute>
               <Hotel />
@@ -275,8 +305,14 @@ createRoot(document.getElementById("root")).render(
             </AdminRoute>
           }
         />
-
-        {/* Admin dan default, dll */}
+        <Route
+          path="/admin/pembayaran"
+          element={
+            <AdminRoute>
+              <PembayaranList />
+            </AdminRoute>
+          }
+        />
       </Routes>
       <ToastProvider />
     </BrowserRouter>
