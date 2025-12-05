@@ -48,7 +48,7 @@ export default function ReservationHistory() {
       const paymentStatus = item.pembayaran?.status_pembayaran || "";
       const idStr = String(item.id_reservasi || "");
 
-      return (
+      return ( // search history berdasarkan nama hotel, alamat, status reservasi, status pembayaran, id
         hotel.toLowerCase().includes(q) ||
         alamat.toLowerCase().includes(q) ||
         status.toLowerCase().includes(q) ||
@@ -86,22 +86,22 @@ export default function ReservationHistory() {
           <div className="mb-4">
             <SearchBar
               value={query}
-              onChange={setQuery}
+              onChange={setQuery} // logika pencarian query
               placeholder="Cari berdasarkan nama hotel, alamat, status, atau ID reservasi..."
             />
           </div>
 
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="divide-y divide-slate-100">
-              {loading ? (
+              {loading ? ( // cek kalau loading
                 <div className="p-6 text-center text-slate-500">
                   Memuat data...
                 </div>
-              ) : filtered.length === 0 ? (
+              ) : filtered.length === 0 ? ( // cek jika tidak ada hasil ditampilkan
                 <div className="p-6 text-center text-slate-500">
                   Belum ada reservasi.
                 </div>
-              ) : (
+              ) : ( // menampilkan hasil pencarian menggunakan map
                 displayed.map((item) => {
                   const hotel =
                     item.rincian_reservasis?.[0]?.kamar?.hotel?.nama_hotel ||

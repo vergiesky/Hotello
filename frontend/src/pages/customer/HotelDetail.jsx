@@ -17,7 +17,7 @@ import Navbar from "../../components/customer/Navbar";
 import { alertError, alertSuccess } from "../../lib/Alert";
 import { toastInfo, toastSuccess } from "../../lib/Toast";
 import { getHotelImageUrls } from "../../lib/HotelImage";
-import { formatDate } from "../../lib/FormatDate";
+import { formatDate } from "../../lib/formatDate";
 import { getHargaMulaiHotel } from "../../lib/HotelPrice";
 import { getHotelRatingStats } from "../../lib/HotelRating";
 import Lightbox from "../../components/customer/Lightbox";
