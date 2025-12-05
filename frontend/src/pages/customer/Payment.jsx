@@ -7,7 +7,7 @@ import { alertConfirm, alertError, alertSuccess } from "../../lib/Alert";
 import { toastInfo } from "../../lib/Toast";
 import { diffNights } from "../../lib/diffNights";
 import { formatRupiah } from "../../lib/formatRupiah";
-import { formatDate } from "../../lib/formatDate";
+import { formatDate } from "../../lib/FormatDate";
 import { normalizeAmount } from "../../lib/paymentHelpers";
 import {
   fetchPembayarans,

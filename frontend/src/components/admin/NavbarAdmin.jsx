@@ -155,7 +155,7 @@ export default function NavbarAdmin() {
       )}
 
       <aside
-        className={`absolute md:sticky inset-y-0 left-0 w-72 md:w-64 lg:w-72 bg-[#0f172a] text-white flex flex-col transform transition-transform duration-300 z-40 md:translate-x-0 md:top-0 md:h-screen md:flex-shrink-0 ${
+        className={`fixed md:sticky inset-y-0 left-0 w-72 md:w-64 lg:w-72 bg-[#0f172a] text-white flex flex-col transform transition-transform duration-300 z-40 md:translate-x-0 md:top-0 md:h-screen md:flex-shrink-0 ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
@@ -249,7 +249,7 @@ export default function NavbarAdmin() {
             </div>
           )}
         </div>
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto md:overflow-y-auto">
           {menu.map((item) => (
             <a
               key={item.label}

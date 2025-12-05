@@ -19,7 +19,7 @@ export default function Navbar() {
     ? `${BASE_URL}/storage/${user.user_profile}`
     : null;
 
-  // hapus semua data di localStorage (termasuk user + token)
+  // hapus semua data di localStorage (termasuk user dan token)
   const handleLogout = () => {
     localStorage.clear();
     navigate("/");

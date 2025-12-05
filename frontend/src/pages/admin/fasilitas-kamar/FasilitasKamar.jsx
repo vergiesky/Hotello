@@ -45,8 +45,7 @@ export default function FasilitasKamar() {
     return items.filter((item) => {
       const room = item.kamar?.nama_kamar || item.nama_kamar || "";
       const name = item.nama_fasilitas_kamar || item.nama_fasilitas || "";
-      const desc = item.keterangan_fasilitas_kamar || item.deskripsi || "";
-      const fields = [room, name, desc].join(" ").toLowerCase();
+      const fields = [room, name].join(" ").toLowerCase();
       return fields.includes(q);
     });
   }, [items, query]);
@@ -96,7 +95,7 @@ export default function FasilitasKamar() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Cari kamar, fasilitas, deskripsi..."
+                placeholder="Cari kamar atau nama fasilitas..."
                 className="pl-9 pr-3 py-2 w-full sm:w-64 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
               />
             </div>

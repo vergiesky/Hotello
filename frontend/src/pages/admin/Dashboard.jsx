@@ -85,7 +85,9 @@ export default function Dashboard() {
       const status = (item.status_pembayaran || "").toLowerCase();
       if (status === "paid") totals.totalPaid += 1;
       if (status === "pending") totals.totalPending += 1;
-      totals.revenue += Number(item.jumlah_bayar) || 0;
+      if (status === "paid") {
+        totals.revenue += Number(item.jumlah_bayar) || 0;
+      }
     });
 
     // gunakan hanya pembayaran yang sudah paid untuk laporan hotel/kamar

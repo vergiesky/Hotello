@@ -128,13 +128,7 @@ export default function PembayaranList() {
         item.reservasi?.rincian_reservasis?.[0]?.kamar?.hotel?.nama_hotel || "";
       const guestName = item.reservasi?.user?.nama || "";
       const bookingId = item.reservasi?.id_reservasi || item.id_reservasi || "";
-      const fields = [
-        hotelName,
-        guestName,
-        item.metode_pembayaran || "",
-        item.status_pembayaran || "",
-        String(bookingId),
-      ]
+      const fields = [hotelName, guestName, String(bookingId)]
         .join(" ")
         .toLowerCase();
       return fields.includes(q);

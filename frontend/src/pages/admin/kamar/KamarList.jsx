@@ -44,8 +44,7 @@ export default function KamarList() {
       const hotel = item.hotel?.nama_hotel || item.nama_hotel || "";
       const room = item.nama_kamar || "";
       const type = item.tipe_kamar || "";
-      const price = item.harga || "";
-      const fields = [hotel, room, type, price]
+      const fields = [hotel, room, type]
         .map((v) => (v === null || v === undefined ? "" : String(v)))
         .join(" ")
         .toLowerCase();

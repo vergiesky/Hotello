@@ -23,6 +23,7 @@ import {
   buildReservasiPayload,
   buildSelections,
   calcTotalBiaya,
+  calcTotalCapacity,
   mapAvailability,
   normalizeHotelDetail,
   nextQty,
@@ -101,7 +102,7 @@ export default function Reservation() {
         setAvailability({});
         alertError(
           "Gagal memuat stok",
-          err.response?.data?.message || "Coba pilih tanggal lain."
+          translateAvailabilityError(err)
         );
       }
     };
@@ -115,6 +116,10 @@ export default function Reservation() {
   const totalBiaya = useMemo(() => {
     return calcTotalBiaya(kamarList, selections, nights);
   }, [nights, selections, kamarList]);
+
+  const totalCapacity = useMemo(() => {
+    return calcTotalCapacity(kamarList, selections);
+  }, [kamarList, selections]);
 
   const handleQtyChange = (id_kamar, delta) => {
     if (!checkIn || !checkOut) {
@@ -142,9 +147,18 @@ export default function Reservation() {
       checkOut,
       nights,
       selections,
+      guestCount,
     });
     if (validationError) {
       alertError(validationError.title, validationError.message);
+      return;
+    }
+
+    if (guestCount > totalCapacity) {
+      alertError(
+        "Jumlah tamu melebihi kapasitas",
+        `Total kapasitas kamar yang dipilih ${totalCapacity}, sedangkan tamu ${guestCount}. Tambahkan kamar atau pilih kamar dengan kapasitas lebih besar.`
+      );
       return;
     }
 
@@ -218,6 +232,34 @@ export default function Reservation() {
     );
   }
 
+  const handleGuestCountChange = (value) => {
+    const parsed = Number(value);
+    if (!value || Number.isNaN(parsed) || parsed < 1) {
+      setGuestCount("");
+      alertError("Jumlah tamu tidak valid", "Minimal 1 tamu untuk reservasi.");
+      return;
+    }
+    setGuestCount(parsed);
+  };
+
+  const translateAvailabilityError = (err) => {
+    const msg = err?.response?.data?.message || "";
+    const lower = msg.toLowerCase();
+    if (lower.includes("after_or_equal")) {
+      return "Tanggal check-in harus hari ini atau setelahnya.";
+    }
+    if (lower.includes("after:check_in") || lower.includes("after check_in")) {
+      return "Tanggal check-out harus setelah tanggal check-in.";
+    }
+    if (lower.includes("check in field must be a date after or equal to today")) {
+      return "Tanggal check-in harus hari ini atau setelahnya.";
+    }
+    if (lower.includes("check out field must be a date after check in")) {
+      return "Tanggal check-out harus setelah tanggal check-in.";
+    }
+    return msg || "Coba pilih tanggal lain.";
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
@@ -244,7 +286,7 @@ export default function Reservation() {
                 guestCount={guestCount}
                 onChangeCheckIn={setCheckIn}
                 onChangeCheckOut={setCheckOut}
-                onChangeGuestCount={setGuestCount}
+                onChangeGuestCount={handleGuestCountChange}
               />
 
               <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">

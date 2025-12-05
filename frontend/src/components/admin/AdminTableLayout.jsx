@@ -14,10 +14,10 @@ export default function AdminTableLayout({
       {typeof totalItems === "number" && totalItems > pageSize && (
         <div className="p-4 border-t border-slate-100 bg-slate-50">
           <AdminPagination
-            currentPage={page}
+            page={page}
             totalItems={totalItems}
             pageSize={pageSize}
-            onPageChange={onPageChange}
+            onChange={onPageChange}
           />
         </div>
       )}

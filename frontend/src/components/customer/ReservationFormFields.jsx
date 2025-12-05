@@ -11,10 +11,15 @@ export default function ReservationFormFields({
 }) {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
-      <h3 className="text-lg font-semibold text-slate-900 mb-4">Detail Reservasi</h3>
+      <h3 className="text-lg font-semibold text-slate-900 mb-4">
+        Detail Reservasi
+      </h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <label className="flex flex-col gap-1 text-sm text-slate-700">
-          Check-in
+          <span className="inline-flex items-center gap-1">
+            <span>Check-in</span>
+            <span className="text-blue-600">*</span>
+          </span>
           <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 bg-slate-50">
             <CalendarIcon className="w-4 h-4 text-slate-500" />
             <input
@@ -26,7 +31,10 @@ export default function ReservationFormFields({
           </div>
         </label>
         <label className="flex flex-col gap-1 text-sm text-slate-700">
-          Check-out
+          <span className="inline-flex items-center gap-1">
+            <span>Check-out</span>
+            <span className="text-blue-600">*</span>
+          </span>
           <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 bg-slate-50">
             <CalendarIcon className="w-4 h-4 text-slate-500" />
             <input
@@ -38,12 +46,14 @@ export default function ReservationFormFields({
           </div>
         </label>
         <label className="flex flex-col gap-1 text-sm text-slate-700">
-          Jumlah Tamu
+          <span className="inline-flex items-center gap-1">
+            <span>Jumlah Tamu</span>
+            <span className="text-blue-600">*</span>
+          </span>
           <div className="flex items-center gap-3 px-3 py-2 rounded-lg border border-slate-200 bg-slate-50">
             <Users className="w-4 h-4 text-slate-500" />
             <input
               type="number"
-              min="1"
               value={guestCount}
               onChange={(e) => onChangeGuestCount?.(e.target.value)}
               className="flex-1 bg-transparent outline-none text-sm text-slate-800 focus:outline-none"

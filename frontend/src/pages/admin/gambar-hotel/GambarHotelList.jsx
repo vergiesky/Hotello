@@ -54,9 +54,7 @@ export default function GambarHotelList() {
     return items.filter((item) => {
       const hotel = item.hotel?.nama_hotel || item.nama_hotel || "";
       const name = item.nama_gambar_hotel || "";
-      const desc = item.keterangan_gambar_hotel || "";
-      const path = item.file_path_gambar_hotel || "";
-      return [hotel, name, desc, path].some((val) =>
+      return [hotel, name].some((val) =>
         String(val).toLowerCase().includes(q)
       );
     });
@@ -98,7 +96,7 @@ export default function GambarHotelList() {
           onQueryChange={setQuery}
           onAdd={() => navigate("/admin/gambar-hotel/create")}
           addLabel="Tambah Gambar"
-          searchPlaceholder="Cari hotel, nama, keterangan..."
+          searchPlaceholder="Cari nama gambar atau hotel..."
         />
 
         <AdminTableLayout
