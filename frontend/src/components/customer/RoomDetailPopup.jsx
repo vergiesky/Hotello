@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Users, CheckCircle2, ChevronLeft, ChevronRight, X, Maximize2 } from "lucide-react";
-import { getKamarImageUrl, getKamarImageUrls } from "../../lib/kamarImage";
+import { getKamarImageUrl, getKamarImageUrls } from "../../lib/KamarImage";
 import { getFasilitasKamarIcon } from "../../lib/FasilitasIcon";
 import Lightbox from "./Lightbox";
 
@@ -179,3 +179,4 @@ export default function RoomDetailPopup({
     </div>
   );
 }
+

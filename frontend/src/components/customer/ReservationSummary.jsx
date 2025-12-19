@@ -1,6 +1,6 @@
 import React from "react";
-import { calcSubtotal } from "../../lib/reservationHelpers";
-import formatRupiah from "../../lib/formatRupiah";
+import { calcSubtotal } from "../../lib/ReservationHelpers";
+import formatRupiah from "../../lib/FormatRupiah";
 
 export default function ReservationSummary({
   guestCount,
@@ -65,3 +65,4 @@ export default function ReservationSummary({
     </aside>
   );
 }
+

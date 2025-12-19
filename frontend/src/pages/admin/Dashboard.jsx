@@ -18,9 +18,9 @@ import {
 } from "recharts";
 import NavbarAdmin from "../../components/admin/NavbarAdmin";
 import { alertError } from "../../lib/Alert";
-import formatRupiah from "../../lib/formatRupiah";
+import formatRupiah from "../../lib/FormatRupiah";
 import { fetchPembayarans } from "../../api/admin/apiAdminPembayarans";
-import { buildHotelDetail, buildMonthlyRevenue } from "../../lib/reportingHelpers";
+import { buildHotelDetail, buildMonthlyRevenue } from "../../lib/ReportingHelpers";
 import SortToggle from "../../components/admin/SortToggle";
 import HotelRankingTable from "../../components/admin/HotelRankingTable";
 import HotelDetailOverlay from "../../components/admin/HotelDetailOverlay";
@@ -269,3 +269,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

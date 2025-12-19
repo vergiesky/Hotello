@@ -4,7 +4,7 @@ import Navbar from "../components/customer/Navbar";
 import NavbarAdmin from "../components/admin/NavbarAdmin";
 import { BASE_URL } from "../api";
 import { alertError, alertSuccess, alertConfirm } from "../lib/Alert";
-import { formatDateLong, toInputDate } from "../lib/formatDate";
+import { formatDateLong, toInputDate } from "../lib/FormatDate";
 import {
   fetchUser,
   updateUser,
@@ -26,7 +26,7 @@ import {
   hasProfileChanges,
   hasAvatarChanges,
   validateProfileFields,
-} from "../lib/userHelpers";
+} from "../lib/UserHelpers";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -415,3 +415,4 @@ export default function Profile() {
     </div>
   );
 }
+

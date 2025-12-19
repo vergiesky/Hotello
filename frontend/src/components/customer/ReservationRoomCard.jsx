@@ -1,7 +1,7 @@
 import React from "react";
 import { Plus, Minus } from "lucide-react";
-import { getKamarImageUrl } from "../../lib/kamarImage";
-import formatRupiah from "../../lib/formatRupiah";
+import { getKamarImageUrl } from "../../lib/KamarImage";
+import formatRupiah from "../../lib/FormatRupiah";
 
 export default function ReservationRoomCard({
   kamar,
@@ -65,3 +65,4 @@ export default function ReservationRoomCard({
     </div>
   );
 }
+

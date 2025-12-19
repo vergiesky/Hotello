@@ -1,5 +1,5 @@
 import React from "react";
-import formatRupiah from "../../lib/formatRupiah";
+import formatRupiah from "../../lib/FormatRupiah";
 
 // Overlay to show detail per-hotel bookings and rooms.
 export default function HotelDetailOverlay({ open, hotel, onClose }) {
@@ -58,3 +58,4 @@ export default function HotelDetailOverlay({ open, hotel, onClose }) {
     </div>
   );
 }
+
