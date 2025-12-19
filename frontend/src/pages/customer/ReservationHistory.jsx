@@ -6,8 +6,8 @@ import { alertError } from "../../lib/Alert";
 import CustomerPagination from "../../components/customer/CustomerPagination";
 import SearchBar from "../../components/customer/SearchBar";
 import StatusBadge from "../../lib/StatusBadge";
-import { formatDate } from "../../lib/formatDate";
-import { formatRupiah } from "../../lib/formatRupiah";
+import { formatDate } from "../../lib/FormatDate";
+import { formatRupiah } from "../../lib/FormatRupiah";
 import { fetchReservasiList } from "../../api/customer/apiReservations";
 import CustomerFooter from "../../components/customer/CustomerFooter";
 

@@ -13,7 +13,7 @@ import ReservationRoomCard from "../../components/customer/ReservationRoomCard";
 import ReservationSummary from "../../components/customer/ReservationSummary";
 import CustomerFooter from "../../components/customer/CustomerFooter";
 import { alertConfirm, alertError, alertSuccess } from "../../lib/Alert";
-import { diffNights } from "../../lib/diffNights";
+import { diffNights } from "../../lib/DiffNights";
 import {
   fetchHotelDetail,
   fetchAvailability,
@@ -27,7 +27,7 @@ import {
   normalizeHotelDetail,
   nextQty,
   validateReservation,
-} from "../../lib/reservationHelpers";
+} from "../../lib/ReservationHelpers";
 
 export default function Reservation() {
   const { hotelId } = useParams();
